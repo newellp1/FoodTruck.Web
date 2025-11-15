@@ -1,0 +1,29 @@
+@model FoodTruck.Web.Models.Schedule
+
+@{
+    ViewData["Title"] = "Schedule Details";
+}
+
+<h2>Schedule Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-2">Truck</dt>
+    <dd class="col-sm-10">@Model.Truck?.Name</dd>
+
+    <dt class="col-sm-2">Location</dt>
+    <dd class="col-sm-10">@Model.Location?.Name</dd>
+
+    <dt class="col-sm-2">Start</dt>
+    <dd class="col-sm-10">@Model.StartTime.ToLocalTime()</dd>
+
+    <dt class="col-sm-2">End</dt>
+    <dd class="col-sm-10">@Model.EndTime.ToLocalTime()</dd>
+
+    <dt class="col-sm-2">Active</dt>
+    <dd class="col-sm-10">@Model.IsActive</dd>
+</dl>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</p>

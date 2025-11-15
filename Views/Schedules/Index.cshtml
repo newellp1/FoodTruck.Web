@@ -1,0 +1,41 @@
+@model IEnumerable<FoodTruck.Web.Models.Schedule>
+
+@{
+    ViewData["Title"] = "Schedules";
+}
+
+<h2>Schedules</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Truck</th>
+            <th>Location</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Truck?.Name</td>
+            <td>@item.Location?.Name</td>
+            <td>@item.StartTime.ToLocalTime()</td>
+            <td>@item.EndTime.ToLocalTime()</td>
+            <td>@item.IsActive</td>
+            <td class="text-end">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-secondary">Edit</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

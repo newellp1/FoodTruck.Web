@@ -1,0 +1,32 @@
+@model FoodTruck.Web.Models.Modifier
+
+@{
+    ViewData["Title"] = "Create Modifier";
+}
+
+<h2>Create Modifier</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Type" class="form-label"></label>
+        <input asp-for="Type" class="form-control" />
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PriceDelta" class="form-label"></label>
+        <input asp-for="PriceDelta" class="form-control" />
+        <span asp-validation-for="PriceDelta" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

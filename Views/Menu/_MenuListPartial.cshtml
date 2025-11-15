@@ -1,0 +1,33 @@
+@model IEnumerable<FoodTruck.Web.Models.MenuCategory>
+
+@foreach (var cat in Model)
+{
+    if (!cat.MenuItems.Any())
+    {
+        continue;
+    }
+
+    <section class="mb-4 menu-category" data-category-id="@cat.Id">
+        <h3>@cat.Name</h3>
+        <div class="row">
+            @foreach (var item in cat.MenuItems)
+            {
+                <div class="col-md-4 mb-3 menu-item"
+                     data-name="@item.Name.ToLower()"
+                     data-description="@((item.Description ?? "").ToLower())">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text">@item.Description</p>
+                            <p class="fw-bold">$@item.Price</p>
+                            <button class="btn btn-sm btn-primary js-view-item"
+                                    data-item-id="@item.Id">
+                                View & Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}

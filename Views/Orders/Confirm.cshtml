@@ -1,0 +1,24 @@
+@model FoodTruck.Web.Models.ViewModels.OrderTrackingViewModel
+
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<h2>Thank you!</h2>
+<p>Your order number is <strong>@Model.OrderId</strong>.</p>
+
+<p>Estimated pickup: @Model.PickupEta?.ToLocalTime().ToString("g")</p>
+
+<div id="order-status"
+     data-order-id="@Model.OrderId">
+    <p>Status: <span id="order-status-text">@Model.Status</span></p>
+</div>
+
+@section Scripts {
+    <script>
+        window.orderStatusConfig = {
+            orderId: @Model.OrderId,
+            statusUrl: '@Url.Action(null, "OrdersApi", new { area = "", id = Model.OrderId }, "https")'.replace("OrdersApi", "api/Orders")
+        };
+    </script>
+}

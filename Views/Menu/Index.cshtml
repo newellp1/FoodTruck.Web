@@ -1,0 +1,62 @@
+@model FoodTruck.Web.Models.ViewModels.MenuViewModel
+
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        @if (Model.ActiveSchedule != null)
+        {
+            <h2>Menu - @Model.ActiveSchedule.Truck.Name</h2>
+            <p>@Model.ActiveSchedule.Location.Name - @Model.ActiveSchedule.Location.Address</p>
+        }
+        else if (Model.NextSchedule != null)
+        {
+            <h2>We’re currently closed</h2>
+            <p>Next up: @Model.NextSchedule.Truck.Name at @Model.NextSchedule.Location.Name (@Model.NextSchedule.Location.Address)</p>
+        }
+        else
+        {
+            <h2>Menu</h2>
+            <p>No upcoming schedule.</p>
+        }
+    </div>
+    <div class="col-md-4">
+        <input id="menu-search" class="form-control" placeholder="Search menu..." data-wcag-label="Search menu items" />
+    </div>
+</div>
+
+<div class="mb-3">
+    <strong>Filter by category:</strong>
+    @foreach (var cat in Model.Categories)
+    {
+        <div class="form-check form-check-inline">
+            <input class="form-check-input category-filter" type="checkbox" value="@cat.Id" id="cat_@cat.Id" checked />
+            <label class="form-check-label" for="cat_@cat.Id">@cat.Name</label>
+        </div>
+    }
+</div>
+
+<div id="menu-list">
+    @Html.Partial("_MenuListPartial", Model.Categories)
+</div>
+
+<div id="item-detail-modal" class="modal fade" tabindex="-1" aria-hidden="true" aria-labelledby="itemDetailLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" id="item-detail-content">
+                @* content via AJAX *@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        window.menuConfig = {
+            itemDetailUrl: '@Url.Action("ItemDetail","Menu")',
+            addToCartUrl: '@Url.Action("Add","Cart")'
+        };
+    </script>
+}

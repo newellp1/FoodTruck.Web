@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - FoodTruck</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-light border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">FoodTruck</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Menu" asp-action="Index">Menu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Orders" asp-action="History">My Orders</a>
+                        </li>
+                        @* show admin/staff links based on roles *@
+                    </ul>
+                    <partial name="_LoginPartial" />
+                    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary ms-3" aria-label="Cart">
+                        <span class="me-1 bi bi-cart"></span>
+                        <span id="cart-summary">
+                            @await Html.PartialAsync("_CartSummaryPartial", new FoodTruck.Web.Models.ViewModels.CartViewModel())
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/menu.js" asp-append-version="true"></script>
+    <script src="~/js/cart.js" asp-append-version="true"></script>
+    <script src="~/js/orders.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

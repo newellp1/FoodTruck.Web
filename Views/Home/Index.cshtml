@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    var active = ViewBag.ActiveSchedule as FoodTruck.Web.Models.Schedule;
+    var next = ViewBag.NextSchedule as FoodTruck.Web.Models.Schedule;
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Food Truck!</h1>
+
+    @if (active != null)
+    {
+        <p class="lead">We’re open now at:</p>
+        <p><strong>@active.Location.Name</strong><br />@active.Location.Address</p>
+        <a asp-controller="Menu" asp-action="Index" class="btn btn-primary btn-lg">Order Now</a>
+    }
+    else if (next != null)
+    {
+        <p class="lead">We’re currently closed.</p>
+        <p>Next stop:</p>
+        <p>
+            <strong>@next.Location.Name</strong><br />
+            @next.Location.Address<br />
+            @next.StartTime.ToLocalTime():g - @next.EndTime.ToLocalTime():g
+        </p>
+        <button class="btn btn-secondary btn-lg" disabled>Order (Closed)</button>
+    }
+    else
+    {
+        <p>No upcoming schedules set. Please check back later.</p>
+    }
+</div>

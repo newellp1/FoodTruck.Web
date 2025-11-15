@@ -1,0 +1,42 @@
+@model FoodTruck.Web.Models.Schedule
+
+@{
+    ViewData["Title"] = "Edit Schedule";
+}
+
+<h2>Edit Schedule</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="TruckId" class="form-label">Truck</label>
+        <select asp-for="TruckId" class="form-select" asp-items="ViewBag.TruckId"></select>
+        <span asp-validation-for="TruckId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="LocationId" class="form-label">Location</label>
+        <select asp-for="LocationId" class="form-select" asp-items="ViewBag.LocationId"></select>
+        <span asp-validation-for="LocationId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="StartTime" class="form-label"></label>
+        <input asp-for="StartTime" class="form-control" type="datetime-local" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="EndTime" class="form-label"></label>
+        <input asp-for="EndTime" class="form-control" type="datetime-local" />
+        <span asp-validation-for="EndTime" class="text-danger"></span>
+    </div>
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
