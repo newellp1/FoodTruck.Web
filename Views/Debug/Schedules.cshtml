@@ -1,0 +1,93 @@
+@{
+    ViewData["Title"] = "Debug - Schedules";
+    var now = ViewBag.CurrentTime as DateTime?;
+    var allSchedules = ViewBag.AllSchedules as List<FoodTruck.Web.Models.Schedule>;
+    var activeSchedule = ViewBag.ActiveSchedule as FoodTruck.Web.Models.Schedule;
+}
+
+<h2>Schedule Debug Information</h2>
+
+<div class="alert alert-info">
+    <strong>Current Server Time:</strong> @now?.ToString("yyyy-MM-dd HH:mm:ss")
+</div>
+
+<h3>Active Schedule (What Home/Menu should show)</h3>
+@if (activeSchedule != null)
+{
+    <div class="alert alert-success">
+        <strong>✓ FOUND Active Schedule:</strong><br/>
+        Truck: @activeSchedule.Truck.Name<br/>
+        Location: @activeSchedule.Location.Name (@activeSchedule.Location.Address)<br/>
+        Start: @activeSchedule.StartTime.ToString("yyyy-MM-dd HH:mm:ss")<br/>
+        End: @activeSchedule.EndTime.ToString("yyyy-MM-dd HH:mm:ss")<br/>
+        IsActive: @activeSchedule.IsActive
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <strong>✗ NO Active Schedule Found</strong><br/>
+        No schedule matches: StartTime &lt;= @now?.ToString("yyyy-MM-dd HH:mm:ss") AND EndTime &gt;= @now?.ToString("yyyy-MM-dd HH:mm:ss")
+    </div>
+}
+
+<h3>All Schedules in Database</h3>
+@if (allSchedules != null && allSchedules.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Truck</th>
+                <th>Location</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>IsActive</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schedule in allSchedules)
+            {
+                var isCurrentlyActive = schedule.StartTime <= now && schedule.EndTime >= now;
+                var rowClass = isCurrentlyActive ? "table-success" : "";
+                
+                <tr class="@rowClass">
+                    <td>@schedule.Id</td>
+                    <td>@schedule.Truck.Name</td>
+                    <td>@schedule.Location.Name</td>
+                    <td>@schedule.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@schedule.EndTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@(schedule.IsActive ? "✓" : "✗")</td>
+                    <td>
+                        @if (isCurrentlyActive)
+                        {
+                            <span class="badge bg-success">ACTIVE NOW</span>
+                        }
+                        else if (schedule.StartTime > now)
+                        {
+                            <span class="badge bg-info">FUTURE</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">PAST</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-danger">
+        <strong>No schedules found in database!</strong><br/>
+        You need to create a schedule first in Admin Dashboard → Schedules.
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="Schedules" asp-action="Index" class="btn btn-primary">Go to Schedules Admin</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Go to Home Page</a>
+    <a asp-controller="Menu" asp-action="Index" class="btn btn-secondary">Go to Menu Page</a>
+</div>

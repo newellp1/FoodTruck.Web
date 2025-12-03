@@ -9,13 +9,12 @@ The goal is to provide:
 - A **customer-facing web app** where customers can:
   - See where the food truck is currently located.
   - Browse a **location-aware menu** that only shows items available for the current schedule.
-  - Configure items with modifiers (size, protein, add-ons, etc.).
-  - Add items to a cart and place pickup orders.
+  - Add items to a Cart and place pickup orders.
   - Track their order status in real time.
 
 - An **admin/staff back-office** where staff can:
   - Manage trucks, locations, and schedules.
-  - Manage menu categories, items, and modifiers (including many-to-many relationships).
+  - Manage menu categories and items (including many-to-many relationships).
   - View and process incoming orders through a kitchen queue.
   - Update order statuses (Pending → Accepted → InProgress → Ready → Completed/Cancelled).
   - Manage user roles and access (Customer, Staff, Admin).
@@ -65,18 +64,6 @@ Key entities:
   - Properties: `Id`, `Name`, `Description`, `Price`, `IsAvailable`, `MenuCategoryId`.
   - Relationships:
     - Many-to-one with `MenuCategory`.
-    - Many-to-many with `Modifier` via `MenuItemModifier`.
-
-- **Modifier**
-  - Customization options (e.g., “Extra Cheese”, “Spicy Sauce”, “Large Size”).
-  - Properties: `Id`, `Name`, `Type` (Size, Protein, Add-on), `PriceDelta`.
-  - Relationships:
-    - Many-to-many with `MenuItem` via `MenuItemModifier`.
-    - Many-to-many with `OrderItem` via `OrderItemModifier`.
-
-- **MenuItemModifier** (many-to-many join)
-  - Links `MenuItem` and `Modifier` plus optional min/max rules.
-  - Properties: `MenuItemId`, `ModifierId`, `MinSelections`, `MaxSelections`.
 
 - **Order**
   - Represents a placed order.
@@ -90,19 +77,10 @@ Key entities:
   - Relationships:
     - Many-to-one with `Order`.
     - Many-to-one with `MenuItem`.
-    - Many-to-many with `Modifier` via `OrderItemModifier`.
-
-- **OrderItemModifier** (many-to-many join)
-  - Links an `OrderItem` to the chosen `Modifier` options.
 
 - **ApplicationUser** (Identity)
   - Extends ASP.NET Core Identity user.
   - Used for authenticated customers, staff, and admins.
-
-**Many-to-many relationships:**
-
-- `MenuItem` ↔ `Modifier` via `MenuItemModifier`.
-- `OrderItem` ↔ `Modifier` via `OrderItemModifier`.
 
 ---
 
@@ -116,13 +94,13 @@ Key entities:
   - The **active truck** and its **current location** (or the next upcoming schedule).
   - A **menu filtered** to items that are available now (`IsAvailable = true`).
 - I can **search** menu items by name/description and **filter by category**.
-- I can view **item details** and select valid **modifiers** with min/max rules and live price updates.
+- I can view **item details** and select valid 
 
 ### 2. Cart & Checkout
 
 - As a customer, I can:
-  - Add items with **selected modifiers and notes** to a cart.
-  - Edit quantities, modifiers, and remove lines.
+  - Add items with **selected items and notes** to a Cart.
+  - Edit quantities and remove lines.
   - Proceed to **checkout** as a guest or signed-in user.
   - Receive an **estimated pickup time (ETA)** and order confirmation.
 
@@ -140,12 +118,11 @@ Key entities:
   - Prevent overlapping schedules for a truck.
   - Set a schedule as **Active Now**, automatically deactivating others.
 
-### 5. Menu, Category, & Modifier Management
+### 5. Menu & Category Management
 
 - As admin, I can:
   - Perform full **CRRUD** (Create, Read, Read-All, Update, Delete) on menu categories and items.
   - Manage `IsAvailable` and pricing.
-  - Manage **modifier** definitions and many-to-many mappings between menu items and modifiers, including per-item min/max rules.
 
 ### 6. Order Operations (Kitchen/Staff)
 

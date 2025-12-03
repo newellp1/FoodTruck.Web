@@ -6,30 +6,49 @@
 
 <h2>Create Schedule</h2>
 
+@* ============================================================
+   Create Schedule Form
+   - Truck: which truck this schedule applies to
+   - Location: where the truck will be
+   - IsActive: whether this schedule is currently active
+   - Times are set automatically to standard operating hours
+   ============================================================ *@
+
+@if (ViewData.ModelState.ErrorCount > 0)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
 <form asp-action="Create" method="post">
     <div class="mb-3">
         <label asp-for="TruckId" class="form-label">Truck</label>
-        <select asp-for="TruckId" class="form-select" asp-items="ViewBag.TruckId"></select>
-        <span asp-validation-for="TruckId" class="text-danger"></span>
+        <select asp-for="TruckId" class="form-select" asp-items="ViewBag.TruckId">
+            <option value="">-- Select a truck --</option>
+        </select>
     </div>
+
     <div class="mb-3">
         <label asp-for="LocationId" class="form-label">Location</label>
-        <select asp-for="LocationId" class="form-select" asp-items="ViewBag.LocationId"></select>
-        <span asp-validation-for="LocationId" class="text-danger"></span>
+        <select asp-for="LocationId" class="form-select" asp-items="ViewBag.LocationId">
+            <option value="">-- Select a location --</option>
+        </select>
     </div>
-    <div class="mb-3">
-        <label asp-for="StartTime" class="form-label"></label>
-        <input asp-for="StartTime" class="form-control" type="datetime-local" />
-        <span asp-validation-for="StartTime" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="EndTime" class="form-label"></label>
-        <input asp-for="EndTime" class="form-control" type="datetime-local" />
-        <span asp-validation-for="EndTime" class="text-danger"></span>
-    </div>
+
     <div class="form-check mb-3">
-        <input asp-for="IsActive" class="form-check-input" />
-        <label asp-for="IsActive" class="form-check-label"></label>
+        <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+        <label asp-for="IsActive" class="form-check-label">
+            Mark as active schedule
+        </label>
+        <div class="form-text">
+            Only one active schedule per truck should be active at a time.
+        </div>
     </div>
 
     <button type="submit" class="btn btn-primary">Create</button>
@@ -37,5 +56,12 @@
 </form>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Completely disable client-side validation
+        $(function() {
+            $('form').removeData('validator');
+            $('form').removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse('form');
+        });
+    </script>
 }

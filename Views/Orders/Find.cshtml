@@ -1,0 +1,51 @@
+@model FoodTruck.Web.Models.ViewModels.OrderLookupViewModel
+
+@{
+    ViewData["Title"] = "Find My Order";
+}
+
+<h2>Find My Order</h2>
+
+<p class="text-muted">
+    Enter your <strong>Order #</strong> or your <strong>Full Name</strong> and <strong>Phone Number</strong>
+    to check the status of your order.
+</p>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="text-danger">
+        @Html.ValidationSummary()
+    </div>
+}
+
+<form asp-action="Find" method="post" class="border rounded p-3 mb-4">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="OrderId" class="form-label"></label>
+        <input asp-for="OrderId" class="form-control" />
+        <span class="form-text">
+            If you know your Order #, you can enter it here.
+        </span>
+    </div>
+
+    <p class="text-center fw-bold mb-2">— OR —</p>
+
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Find Order
+    </button>
+</form>
+
+<p>
+    <a asp-controller="Home" asp-action="Index">Back to Home</a>
+</p>

@@ -22,7 +22,5 @@ namespace FoodTruck.Web.Models
 
         [StringLength(250)]
         public string? Notes { get; set; }
-
-        public ICollection<OrderItemModifier> OrderItemModifiers { get; set; } = new List<OrderItemModifier>();
-    }
+   }
 }

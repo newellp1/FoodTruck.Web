@@ -1,0 +1,115 @@
+@model FoodTruck.Web.Models.Admin
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-3">Admin Dashboard</h2>
+
+<p class="text-muted">
+    Dashboard generated at @Model.GeneratedAtUtc.ToLocalTime()
+</p>
+
+<!-- =============================
+     Row 1: Order & User statistics
+     ============================= -->
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Orders" asp-action="Index" class="text-decoration-none text-dark">
+            <div class="card border-primary h-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text display-6">@Model.TotalOrders</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Orders" asp-action="Index" asp-route-status="Pending"
+           class="text-decoration-none text-dark">
+            <div class="card border-warning h-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="card-title">Pending Orders</h5>
+                    <p class="card-text display-6">@Model.PendingOrders</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Orders" asp-action="Index" asp-route-status="Preparing"
+           class="text-decoration-none text-dark">
+            <div class="card border-info h-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="card-title">In Progress</h5>
+                    <p class="card-text display-6">@Model.InProgressOrders</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Admin" asp-action="Users"
+           class="text-decoration-none text-dark">
+            <div class="card border-success h-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text display-6">@Model.UserCount</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- =============================
+     Row 2: Menu-related statistics
+     ============================= -->
+<div class="row mt-3">
+    <div class="col-md-3 mb-3">
+        <a asp-action="ManageMenuItems" class="text-decoration-none text-dark">
+            <div class="card border-secondary h-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="card-title">Menu Items</h5>
+                    <p class="card-text display-6">@Model.MenuItemCount</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-action="ManageCategories" class="text-decoration-none text-dark">
+            <div class="card border-secondary h-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="card-title">Categories</h5>
+                    <p class="card-text display-6">@Model.CategoryCount</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a asp-action="ManageSchedules" class="text-decoration-none text-dark">
+            <div class="card border-secondary h-100">
+                <div class="card-body text-center py-3">
+                    <h5 class="card-title">Schedules</h5>
+                    <p class="card-text display-6">@Model.ScheduleCount</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<hr />
+
+<!-- =============================
+     Quick action buttons (optional)
+     ============================= -->
+<h4>Quick Links</h4>
+<div class="btn-group mb-3" role="group">
+    <a asp-action="ManageCategories" class="btn btn-outline-primary">Manage Categories</a>
+    <a asp-action="ManageMenuItems" class="btn btn-outline-primary">Manage Menu Items</a>
+    <a asp-action="ManageSchedules" class="btn btn-outline-primary">Manage Schedules</a>
+    <a asp-controller="Admin" asp-action="Users" class="btn btn-outline-secondary">View Users</a>
+    <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-secondary">All Orders</a>
+</div>

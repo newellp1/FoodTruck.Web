@@ -1,48 +1,136 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+﻿/* ============================================================
+   LAYOUT BASE STYLES
+   Modernized for FoodTruck.Web
+   ============================================================ */
 
+/* ---- Branding ---- */
 a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: nowrap;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #ff5722 !important; /* warm orange food-truck color */
 }
 
+/* ---- Global Links ---- */
 a {
-  color: #0077cc;
+    color: #ff5722;
+    text-decoration: none;
 }
 
+a:hover {
+    color: #e64a19;
+    text-decoration: underline;
+}
+
+/* ---- Primary Button ---- */
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #ff5722;
+    border-color: #e64a19;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.btn-primary:hover {
+    background-color: #e64a19;
+    border-color: #d84315;
 }
 
+/* ---- Secondary Button ---- */
+.btn-secondary {
+    background-color: #757575;
+    border-color: #616161;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #616161;
+    border-color: #4e4e4e;
+}
+
+/* ---- Active Tabs / Pills ---- */
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #ff5722;
+    border-color: #e64a19;
+}
+
+/* ---- Borders ---- */
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #ddd;
 }
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #ddd;
 }
 
+/* ---- Shadows ---- */
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.08);
 }
 
+/* ---- Cookie / Policy Button ---- */
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
+    padding: 0.5rem 1rem;
 }
+
+/* ============================================================
+   NAVBAR IMPROVEMENTS
+   ============================================================ */
+
+.navbar {
+    padding: 0.75rem 1rem;
+    background: #ffffff;
+    border-bottom: 1px solid #eee;
+}
+
+.navbar .nav-link {
+    padding: 0.5rem 1rem;
+}
+
+.navbar .nav-link:hover {
+    background-color: rgba(255, 87, 34, 0.1);
+    border-radius: 6px;
+}
+
+/* Highlight the cart */
+.cart-summary-text {
+    font-weight: 600;
+    color: #ff5722;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
 
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    padding: 20px 0;
+    text-align: center;
+    color: #777;
+    font-size: 0.9rem;
+
+    /* Removed absolute—footer no longer breaks layout */
+    position: relative;
+    bottom: auto;
+    line-height: normal;
+}
+
+.footer a {
+    color: #ff5722;
+}
+
+/* ============================================================
+   RESPONSIVE BEHAVIOR
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .navbar .nav-link {
+        padding: 0.5rem 0.75rem;
+    }
+
+    a.navbar-brand {
+        font-size: 1.1rem;
+    }
 }

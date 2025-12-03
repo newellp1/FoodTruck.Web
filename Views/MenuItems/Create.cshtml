@@ -5,36 +5,72 @@
 }
 
 <h2>Create Menu Item</h2>
+<hr />
 
 <form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="MenuCategoryId" class="form-label">Category</label>
-        <select asp-for="MenuCategoryId" class="form-select"
-                asp-items="ViewBag.MenuCategoryId"></select>
-        <span asp-validation-for="MenuCategoryId" class="text-danger"></span>
-    </div>
-    <div class="form-check mb-3">
-        <input asp-for="IsAvailable" class="form-check-input" />
-        <label asp-for="IsAvailable" class="form-check-label"></label>
+    @* Show all validation messages *@
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="row">
+        <div class="col-md-6">
+
+            @* Name *@
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            @* Description *@
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            @* Price *@
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            @* Category dropdown *@
+            <div class="mb-3">
+                <label asp-for="MenuCategoryId" class="form-label">Category</label>
+                <select asp-for="MenuCategoryId"
+                        class="form-select"
+                        asp-items="@(ViewData["MenuCategoryId"] as IEnumerable<SelectListItem>)">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="MenuCategoryId" class="text-danger"></span>
+            </div>
+
+            @* Image Path (optional)*@
+            <div class="form-group">
+                <label asp-for="ImagePath" class="control-label"></label>
+                <input asp-for="ImagePath" class="form-control" />
+                <span asp-validation-for="ImagePath" class="text-danger"></span>
+            </div>
+
+            @* Is Available *@
+            <div class="form-check mb-3">
+                <input asp-for="IsAvailable" class="form-check-input" />
+                <label asp-for="IsAvailable" class="form-check-label"></label>
+            </div>
+
+            @* Optional display order *@
+            <div class="mb-3">
+                <label asp-for="DisplayOrder" class="form-label"></label>
+                <input asp-for="DisplayOrder" class="form-control" />
+                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+            </div>
+
+        </div>
     </div>
 
     <button type="submit" class="btn btn-primary">Create</button>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Back to List</a>
 </form>
 
 @section Scripts {

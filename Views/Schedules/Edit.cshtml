@@ -6,31 +6,57 @@
 
 <h2>Edit Schedule</h2>
 
+@* ============================================================
+   Edit Schedule Form
+   - Same fields as Create, but populated with existing values.
+   ============================================================ *@
+
 <form asp-action="Edit" method="post">
+    @* Hidden primary key *@
     <input type="hidden" asp-for="Id" />
+
     <div class="mb-3">
         <label asp-for="TruckId" class="form-label">Truck</label>
-        <select asp-for="TruckId" class="form-select" asp-items="ViewBag.TruckId"></select>
+        <select asp-for="TruckId" class="form-select" asp-items="ViewBag.TruckId">
+            <option value="">-- Select a truck --</option>
+        </select>
         <span asp-validation-for="TruckId" class="text-danger"></span>
     </div>
+
     <div class="mb-3">
         <label asp-for="LocationId" class="form-label">Location</label>
-        <select asp-for="LocationId" class="form-select" asp-items="ViewBag.LocationId"></select>
+        <select asp-for="LocationId" class="form-select" asp-items="ViewBag.LocationId">
+            <option value="">-- Select a location --</option>
+        </select>
         <span asp-validation-for="LocationId" class="text-danger"></span>
     </div>
+
     <div class="mb-3">
-        <label asp-for="StartTime" class="form-label"></label>
+        <label asp-for="StartTime" class="form-label">Start Time</label>
         <input asp-for="StartTime" class="form-control" type="datetime-local" />
+        <span class="form-text">
+            When this schedule begins (local time).
+        </span>
         <span asp-validation-for="StartTime" class="text-danger"></span>
     </div>
+
     <div class="mb-3">
-        <label asp-for="EndTime" class="form-label"></label>
+        <label asp-for="EndTime" class="form-label">End Time</label>
         <input asp-for="EndTime" class="form-control" type="datetime-local" />
+        <span class="form-text">
+            When this schedule ends (local time).
+        </span>
         <span asp-validation-for="EndTime" class="text-danger"></span>
     </div>
+
     <div class="form-check mb-3">
         <input asp-for="IsActive" class="form-check-input" />
-        <label asp-for="IsActive" class="form-check-label"></label>
+        <label asp-for="IsActive" class="form-check-label">
+            Mark as active schedule
+        </label>
+        <div class="form-text">
+            Only one active schedule per truck should be active at a time.
+        </div>
     </div>
 
     <button type="submit" class="btn btn-primary">Save</button>

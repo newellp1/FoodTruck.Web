@@ -1,0 +1,130 @@
+@model IEnumerable<FoodTruck.Web.Models.Order>
+
+@using FoodTruck.Web.Models.Enums
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h2>Orders</h2>
+
+@if (!string.IsNullOrEmpty(Context.Request.Query["status"]))
+{
+    <p class="text-muted">
+        Showing orders with status:
+        <strong>@Context.Request.Query["status"]</strong>
+    </p>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<table class="table table-striped table-bordered align-middle">
+    <thead>
+        <tr>
+            <th>Order #</th>
+            <th>Created</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th class="text-end">Total</th>
+            <th>Pickup ETA</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var o in Model)
+        {
+            <tr>
+                <td>@o.Id</td>
+                <td>@o.CreatedAt.ToLocalTime().ToString("g")</td>
+                <td>
+                    @(string.IsNullOrWhiteSpace(o.ContactName)
+                        ? "(Guest)"
+                        : o.ContactName)
+                </td>
+                <td>@o.Status</td>
+                <td class="text-end">@o.Total.ToString("C")</td>
+                <td>
+                    @if (o.PickupEta.HasValue)
+                    {
+                        @o.PickupEta.Value.ToLocalTime().ToString("t")
+                    }
+                    else
+                    {
+                        <span class="text-muted">n/a</span>
+                    }
+                </td>
+                <td class="text-center">
+                    <div class="d-flex flex-wrap justify-content-center gap-1">
+
+                        <!-- View (goes to Confirm page – this is what you're seeing now) -->
+                        <a asp-action="Confirm"
+                           asp-route-id="@o.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            View
+                        </a>
+
+                        <!-- Admin-only status change controls -->
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <form asp-action="UpdateStatus"
+                                  method="post"
+                                  class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@o.Id" />
+
+                                <select name="newStatus"
+                                        class="form-select form-select-sm d-inline w-auto">
+                                    <option value="@OrderStatus.Pending"
+                                        selected="@(o.Status == OrderStatus.Pending)">
+                                        Pending
+                                    </option>
+                                    <option value="@OrderStatus.Accepted"
+                                        selected="@(o.Status == OrderStatus.Accepted)">
+                                        Accepted
+                                    </option>
+                                    <option value="@OrderStatus.Preparing"
+                                        selected="@(o.Status == OrderStatus.Preparing)">
+                                        Preparing
+                                    </option>
+                                    <option value="@OrderStatus.Ready"
+                                        selected="@(o.Status == OrderStatus.Ready)">
+                                        Ready
+                                    </option>
+                                    <option value="@OrderStatus.Completed"
+                                        selected="@(o.Status == OrderStatus.Completed)">
+                                        Complete
+                                    </option>
+                                    <option value="@OrderStatus.Cancelled"
+                                        selected="@(o.Status == OrderStatus.Cancelled)">
+                                        Cancelled
+                                    </option>
+                                </select>
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-secondary">
+                                    Update
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="7" class="text-center text-muted">
+                No orders found.
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

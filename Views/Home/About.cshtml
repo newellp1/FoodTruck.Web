@@ -1,0 +1,126 @@
+@using FoodTruck.Web.Models
+
+@{
+    ViewData["Title"] = "About Us";
+
+    // Get the active schedule (set by HomeController.About)
+    var activeSchedule = ViewBag.ActiveSchedule as Schedule;
+
+    Location? loc = null;
+    string? directionsUrl = null;
+    string? mapEmbedUrl = null;
+
+    if (activeSchedule?.Location != null)
+    {
+        loc = activeSchedule.Location;
+        var lat = loc.Latitude;
+        var lon = loc.Longitude;
+
+        if (lat.HasValue && lon.HasValue)
+        {
+            // Use coordinates for OpenStreetMap
+            directionsUrl =
+                $"https://www.openstreetmap.org/?mlat={lat.Value}&mlon={lon.Value}#map=16/{lat.Value}/{lon.Value}";
+
+            // Small bounding box for the embedded map
+            var latDelta = 0.005;
+            var lonDelta = 0.005;
+            var minLat = lat.Value - latDelta;
+            var maxLat = lat.Value + latDelta;
+            var minLon = lon.Value - lonDelta;
+            var maxLon = lon.Value + lonDelta;
+
+            mapEmbedUrl =
+                $"https://www.openstreetmap.org/export/embed.html?bbox={minLon}%2C{minLat}%2C{maxLon}%2C{maxLat}&layer=mapnik&marker={lat.Value}%2C{lon.Value}";
+        }
+        else
+        {
+            // Fallback: use the formatted address for search
+            var fullAddress = $"{loc.Address} {loc.City} {loc.State} {loc.ZipCode}".Trim();
+            directionsUrl =
+                $"https://www.openstreetmap.org/search?query={fullAddress}";
+        }
+    }
+}
+
+<div class="container mt-4">
+    <h1 class="mb-3">About Charr & Challaw</h1>
+
+    <p class="lead">
+        Welcome to <strong>Charr & Challaw</strong>, your home for bold flavors, fresh ingredients, 
+        and authentic Afghan-inspired street food!
+    </p>
+
+    <hr />
+
+    <h3>Our Story</h3>
+    <p>
+        Charr & Challaw began as a passion project built on family traditions and a 
+        love for delicious, fresh-cooked meals. Our mission is to bring the warmth 
+        and richness of Afghan cuisine to the streets, one plate at a time.
+    </p>
+
+    <h3>What Makes Us Unique</h3>
+    <ul>
+        <li>Authentic, flavorful dishes made fresh daily</li>
+        <li>Locally sourced ingredients whenever possible</li>
+        <li>Family recipes passed down through generations</li>
+        <li>A commitment to friendly service and unforgettable meals</li>
+    </ul>
+
+    <h3>Our Food Truck</h3>
+    <p>
+        You can find our food truck at rotating locations across the region.  
+        Check out our schedule and map to see where we'll be next!
+    </p>
+
+    <h3>Contact Us</h3>
+    <p>
+        <strong>Email:</strong> charrandchallaw@example.com<br />
+        <strong>Phone:</strong> (555) 123-4567
+    </p>
+
+    @* --- Find Our Truck section --- *@
+    @if (loc != null && directionsUrl != null)
+    {
+        <hr />
+        <h3>Find Our Truck</h3>
+        <p>
+            <strong>Today’s Location:</strong><br />
+            @loc.Name<br />
+            @loc.Address @loc.City, @loc.State @loc.ZipCode
+        </p>
+
+        <p>
+            <a href="@directionsUrl" target="_blank" rel="noopener">
+                Get Directions
+            </a>
+        </p>
+
+        @if (mapEmbedUrl != null)
+        {
+            <div class="mt-2">
+                <iframe
+                    width="100%"
+                    height="250"
+                    frameborder="0"
+                    scrolling="no"
+                    marginheight="0"
+                    marginwidth="0"
+                    src="@mapEmbedUrl">
+                </iframe>
+                <small>
+                    <a href="@directionsUrl" target="_blank" rel="noopener">
+                        View larger map
+                    </a>
+                </small>
+            </div>
+        }
+    }
+    else
+    {
+        <hr />
+        <h3>Find Our Truck</h3>
+        <p>Our current location isn’t set right now. Please check back soon!</p>
+    }
+</div>

@@ -1,46 +1,68 @@
-using FoodTruck.Web.Data;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FoodTruck.Web.Data;
+using FoodTruck.Web.Models;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
-    /// Home and landing pages.
-    /// </summary>
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ApplicationDbContext context, ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
-            _context = context;
             _logger = logger;
+            _context = context;
         }
 
-        /// <summary>
-        /// Landing page: shows active or next schedule.
-        /// </summary>
         public async Task<IActionResult> Index()
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
 
-            var activeSchedule = await _context.Schedules
-                .Include(s => s.Truck)
+            var active = await _context.Schedules
                 .Include(s => s.Location)
-                .FirstOrDefaultAsync(s => s.IsActive && s.StartTime <= now && s.EndTime >= now);
+                .Where(s => s.StartTime <= now && s.EndTime >= now)
+                .OrderBy(s => s.StartTime)
+                .FirstOrDefaultAsync();
 
-            var nextSchedule = await _context.Schedules
-                .Include(s => s.Truck)
+            var next = await _context.Schedules
                 .Include(s => s.Location)
                 .Where(s => s.StartTime > now)
                 .OrderBy(s => s.StartTime)
                 .FirstOrDefaultAsync();
 
-            ViewBag.ActiveSchedule = activeSchedule;
-            ViewBag.NextSchedule = nextSchedule;
+            ViewBag.ActiveSchedule = active;
+            ViewBag.NextSchedule = next;
 
             return View();
+        }
+
+        public async Task<IActionResult> About()
+        {
+            var now = DateTime.Now;
+
+            var active = await _context.Schedules
+                .Include(s => s.Location)
+                .Where(s => s.StartTime <= now && s.EndTime >= now)
+                .OrderBy(s => s.StartTime)
+                .FirstOrDefaultAsync();
+
+            ViewBag.ActiveSchedule = active;
+
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

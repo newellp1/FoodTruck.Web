@@ -1,0 +1,145 @@
+@model FoodTruck.Web.Models.ViewModels.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2>Checkout</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+
+        @* Show validation summary if there are any errors *@
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <form asp-action="Checkout" method="post">
+            @Html.AntiForgeryToken()
+
+            @* ============================
+               Contact information
+               ============================ *@
+            <h4>Contact information</h4>
+            <div class="mb-3">
+                <label asp-for="ContactName" class="form-label"></label>
+                <input asp-for="ContactName" class="form-control" />
+                <span asp-validation-for="ContactName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactEmail" class="form-label"></label>
+                <input asp-for="ContactEmail" class="form-control" />
+                <span asp-validation-for="ContactEmail" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactPhone" class="form-label"></label>
+                <input asp-for="ContactPhone" class="form-control" />
+                <span asp-validation-for="ContactPhone" class="text-danger"></span>
+            </div>
+
+            <hr />
+
+            @* ============================
+               Payment (demo-only)
+               ============================ *@
+            <h4>Payment</h4>
+            <p class="text-muted">
+                This is a demo checkout. Card details are <strong>not</strong> actually charged or stored.
+            </p>
+
+            @* Payment method radio buttons *@
+            <div class="mb-3">
+                <label class="form-label">Payment method</label>
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="pay-cash"
+                           name="PaymentMethod"
+                           value="Cash"
+                           checked="@(Model.PaymentMethod == "Cash" ? "checked" : null)" />
+                    <label class="form-check-label" for="pay-cash">
+                        Cash (pay at pickup)
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="pay-card"
+                           name="PaymentMethod"
+                           value="Card"
+                           checked="@(Model.PaymentMethod == "Card" ? "checked" : null)" />
+                    <label class="form-check-label" for="pay-card">
+                        Card (demo)
+                    </label>
+                </div>
+                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+            </div>
+
+            @* Card details section – only really needed if "Card" is chosen *@
+            <div id="card-section" class="border rounded p-3 mb-3">
+                <div class="mb-3">
+                    <label asp-for="CardNumber" class="form-label"></label>
+                    <input asp-for="CardNumber"
+                           class="form-control"
+                           maxlength="12"
+                           inputmode="numeric"
+                           placeholder="123456789012" />
+                    <small class="form-text text-muted">
+                        12 digits only (demo card number).
+                    </small>
+                    <span asp-validation-for="CardNumber" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Expiry" class="form-label"></label>
+                        <input asp-for="Expiry"
+                               class="form-control"
+                               placeholder="04/27" />
+                        <span asp-validation-for="Expiry" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Cvv" class="form-label"></label>
+                        <input asp-for="Cvv"
+                               class="form-control"
+                               inputmode="numeric"
+                               maxlength="4"
+                               placeholder="123" />
+                        <span asp-validation-for="Cvv" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Place Order
+            </button>
+
+            <a asp-controller="Cart" asp-action="Index" class="btn btn-secondary ms-2">
+                Back to Cart
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Simple toggle: show/hide card section depending on selected method
+        (function () {
+            function toggleCardSection() {
+                var payCard = document.getElementById("pay-card");
+                var section = document.getElementById("card-section");
+                if (!payCard || !section) return;
+                section.style.display = payCard.checked ? "block" : "none";
+            }
+
+            document.getElementById("pay-cash")?.addEventListener("change", toggleCardSection);
+            document.getElementById("pay-card")?.addEventListener("change", toggleCardSection);
+
+            // initial state on page load
+            toggleCardSection();
+        })();
+    </script>
+}

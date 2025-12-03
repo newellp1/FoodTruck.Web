@@ -1,3 +1,39 @@
 @model FoodTruck.Web.Models.ViewModels.CartViewModel
 
-<span>@Model.Items.Count item(s) - $@Model.Subtotal</span>
+@* 
+    _CartSummaryPartial.cshtml
+    ---------------------------
+    This partial renders the small text shown in the navbar cart button.
+
+    It expects a CartViewModel to be passed in from the layout or a controller.
+    We safely handle cases where the model or Items collection is null.
+*@
+
+@{
+    // Number of items in the cart (0 if Model or Items is null)
+    var itemCount = Model?.Items?.Count ?? 0;
+
+    // Subtotal of all items in the cart (0 if Model is null)
+    var subtotal = Model?.Subtotal ?? 0m;
+
+    // Build a user-friendly label, e.g.:
+    // "Cart: empty" or "Cart: 2 items - $12.50"
+    string text;
+
+    if (itemCount == 0)
+    {
+        text = "Cart: empty";
+    }
+    else if (itemCount == 1)
+    {
+        text = $"Cart: 1 item - {subtotal:C}";
+    }
+    else
+    {
+        text = $"Cart: {itemCount} items - {subtotal:C}";
+    }
+}
+
+<span class="cart-summary-text">
+    @text
+</span>

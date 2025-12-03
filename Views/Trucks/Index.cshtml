@@ -1,0 +1,32 @@
+@model IEnumerable<FoodTruck.Web.Models.Truck>
+@{
+    ViewData["Title"] = "Trucks";
+}
+
+<h2>Trucks</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Truck</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var t in Model)
+    {
+        <tr>
+            <td>@t.Name</td>
+            <td class="text-end">
+                <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-sm btn-secondary">Edit</a>
+                <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-info">Details</a>
+                <a asp-action="Delete" asp-route-id="@t.Id" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

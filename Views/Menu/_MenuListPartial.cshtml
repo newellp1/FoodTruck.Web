@@ -1,33 +1,159 @@
 @model IEnumerable<FoodTruck.Web.Models.MenuCategory>
 
+@* 
+    This partial renders the public-facing menu:
+    - Groups by top-level category (e.g., "Entrees", "Sides", "Beverages")
+    - Shows sub-categories (e.g., "Beef Tikka Kabob", "Bottled Water", "Challaw")
+    - Only shows items where IsAvailable = true
+    - Supports client-side search/filter via data-name and data-description
+*@
+
 @foreach (var cat in Model)
 {
-    if (!cat.MenuItems.Any())
+    // If you are passing ONLY top-level categories from the controller,
+    // "cat" is a top-level category. It may have:
+    //  - MenuItems directly under it
+    //  - SubCategories that each have their own MenuItems.
+
+    var directItems = (cat.MenuItems ?? Enumerable.Empty<FoodTruck.Web.Models.MenuItem>())
+        .Where(i => i.IsAvailable)
+        .ToList();
+
+    var subCategories = cat.SubCategories ?? new List<FoodTruck.Web.Models.MenuCategory>();
+
+    // Gather all sub-category items (available only)
+    var subCategoryItems = subCategories
+        .SelectMany(sc => sc.MenuItems ?? Enumerable.Empty<FoodTruck.Web.Models.MenuItem>())
+        .Where(i => i.IsAvailable)
+        .ToList();
+
+    // If this category has no direct items AND no sub-category items, skip it.
+    if (!directItems.Any() && !subCategoryItems.Any())
     {
         continue;
     }
 
     <section class="mb-4 menu-category" data-category-id="@cat.Id">
         <h3>@cat.Name</h3>
-        <div class="row">
-            @foreach (var item in cat.MenuItems)
-            {
-                <div class="col-md-4 mb-3 menu-item"
-                     data-name="@item.Name.ToLower()"
-                     data-description="@((item.Description ?? "").ToLower())">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">@item.Name</h5>
-                            <p class="card-text">@item.Description</p>
-                            <p class="fw-bold">$@item.Price</p>
-                            <button class="btn btn-sm btn-primary js-view-item"
-                                    data-item-id="@item.Id">
-                                View & Add
-                            </button>
+
+        @* ================================
+           Direct items under this category
+           ================================ *@
+        @if (directItems.Any())
+        {
+            <div class="row mb-3">
+                @foreach (var item in directItems)
+                {
+                    // Build lowercased strings for search attributes
+                    var nameLower = (item.Name ?? string.Empty).ToLower();
+                    var descLower = (item.Description ?? string.Empty).ToLower();
+
+                    // Build image URL if we have an ImagePath
+                    string? imageSrc = null;
+                    if (!string.IsNullOrEmpty(item.ImagePath)) 
+                    {
+                        if (item.ImagePath.StartsWith("http", StringComparison.OrdinalIgnoreCase) ||
+                            item.ImagePath.StartsWith("/"))
+                        {
+                            // Full URL or root-relative path
+                            imageSrc = item.ImagePath;
+                        }
+                        else
+                        {
+                            // Assume it's a file name in wwwroot/images
+                            imageSrc = Url.Content("~/images/" + item.ImagePath);
+                        }
+                    }
+
+                    <div class="col-md-4 mb-3 menu-item"
+                         data-name="@nameLower"
+                         data-description="@descLower">
+                        <div class="card h-100">
+                            @* NEW: item image at the top of the card *@
+                            @if (imageSrc != null)
+                            {
+                                <img src="@imageSrc"
+                                     class="card-img-top"
+                                     alt="@item.Name"
+                                     style="height: 350px; object-fit: cover;" />
+                            }
+
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                                <p class="card-text">@item.Description</p>
+                                <p class="fw-bold">@item.Price.ToString("C")</p>
+                                <button class="btn btn-sm btn-primary js-view-item"
+                                        data-item-id="@item.Id">
+                                    View &amp; Add
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
+            </div>
+        }
+
+        @* ================================
+           Items in sub-categories
+           (e.g. Soda, Juice, etc.)
+           ================================ *@
+        @foreach (var sub in subCategories)
+        {
+            var subItems = (sub.MenuItems ?? Enumerable.Empty<FoodTruck.Web.Models.MenuItem>())
+                .Where(i => i.IsAvailable)
+                .ToList();
+
+            if (!subItems.Any())
+            {
+                continue;
             }
-        </div>
+
+            <h4 class="mt-3">@sub.Name</h4>
+            <div class="row mb-3">
+                @foreach (var item in subItems)
+                {
+                    var nameLower = (item.Name ?? string.Empty).ToLower();
+                    var descLower = (item.Description ?? string.Empty).ToLower();
+
+                    string? imageSrc = null;
+                    if (!string.IsNullOrEmpty(item.ImagePath))   @* change to ImageUrl if needed *@
+                    {
+                        if (item.ImagePath.StartsWith("http", StringComparison.OrdinalIgnoreCase) ||
+                            item.ImagePath.StartsWith("/"))
+                        {
+                            imageSrc = item.ImagePath;
+                        }
+                        else
+                        {
+                            imageSrc = Url.Content("~/images/" + item.ImagePath);
+                        }
+                    }
+
+                    <div class="col-md-4 mb-3 menu-item"
+                         data-name="@nameLower"
+                         data-description="@descLower">
+                        <div class="card h-100">
+                            @if (imageSrc != null)
+                            {
+                                <img src="@imageSrc"
+                                     class="card-img-top"
+                                     alt="@item.Name"
+                                     style="height: 180px; object-fit: cover;" />
+                            }
+
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                                <p class="card-text">@item.Description</p>
+                                <p class="fw-bold">@item.Price.ToString("C")</p>
+                                <button class="btn btn-sm btn-primary js-view-item"
+                                        data-item-id="@item.Id">
+                                    View &amp; Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     </section>
 }

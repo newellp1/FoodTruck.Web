@@ -7,12 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
     /// Handles cart operations stored in session.
-    /// </summary>
     public class CartController : Controller
     {
-        private const string CART_KEY = "CART";
+        // Must match OrdersController.CartSessionKey ("Cart")
+        private const string CART_KEY = "Cart";
         private readonly ApplicationDbContext _context;
 
         public CartController(ApplicationDbContext context)
@@ -37,26 +36,23 @@ namespace FoodTruck.Web.Controllers
             HttpContext.Session.SetString(CART_KEY, json);
         }
 
-        /// <summary>
         /// Show cart page.
-        /// </summary>
         public IActionResult Index()
         {
             var cart = GetCart();
             return View(cart);
         }
 
-        /// <summary>
         /// Add line to cart (AJAX).
-        /// </summary>
         [HttpPost]
-        public async Task<IActionResult> Add(int menuItemId, int quantity, string? notes, List<int>? modifierIds)
+        public async Task<IActionResult> Add(int menuItemId, int quantity, string? notes)
         {
-            if (quantity <= 0) quantity = 1;
+            if (quantity <= 0)
+            {
+                quantity = 1;
+            }
 
             var menuItem = await _context.MenuItems
-                .Include(mi => mi.MenuItemModifiers)
-                    .ThenInclude(mim => mim.Modifier)
                 .FirstOrDefaultAsync(mi => mi.Id == menuItemId && mi.IsAvailable);
 
             if (menuItem == null)
@@ -64,82 +60,75 @@ namespace FoodTruck.Web.Controllers
                 return BadRequest("Item unavailable.");
             }
 
-            modifierIds ??= new List<int>();
-
-            // Validate modifiers: check they belong to this item
-            var validModifierIds = menuItem.MenuItemModifiers.Select(mim => mim.ModifierId).ToHashSet();
-            if (!modifierIds.All(id => validModifierIds.Contains(id)))
-            {
-                return BadRequest("Invalid modifiers.");
-            }
-
-            // Optional: enforce min/max for modifier Types
-            // (skipped for brevity, but this is where you'd check)
-
-            var basePrice = menuItem.Price;
-            var modifiers = await _context.Modifiers.Where(m => modifierIds.Contains(m.Id)).ToListAsync();
-            var totalDelta = modifiers.Sum(m => m.PriceDelta);
-            var unitPrice = basePrice + totalDelta;
-
             var cart = GetCart();
 
-            // Merge if same config already in cart
+            // See if there's already the same item (same menuItemId + same notes)
             var existing = cart.Items.FirstOrDefault(i =>
                 i.MenuItemId == menuItemId &&
-                i.Notes == notes &&
-                i.ModifierIds.OrderBy(x => x).SequenceEqual(modifierIds.OrderBy(x => x)));
+                (i.Notes ?? string.Empty) == (notes ?? string.Empty));
 
             if (existing != null)
             {
+                // Just bump the quantity and recalc line total
                 existing.Quantity += quantity;
+
             }
             else
             {
+                // Add a brand new line
                 cart.Items.Add(new CartItemViewModel
                 {
                     MenuItemId = menuItem.Id,
                     Name = menuItem.Name,
                     Quantity = quantity,
-                    UnitPrice = unitPrice,
-                    Notes = notes,
-                    ModifierIds = modifierIds,
-                    ModifierSummary = string.Join(", ", modifiers.Select(m => $"{m.Name} ({m.PriceDelta:+0.00;-0.00;0})"))
+                    UnitPrice = menuItem.Price,
+                    Notes = notes
                 });
             }
 
             SaveCart(cart);
 
+            // Re-render the cart summary partial
             return PartialView("~/Views/Shared/_CartSummaryPartial.cshtml", cart);
         }
 
-        /// <summary>
-        /// Update quantity.
-        /// </summary>
+        /// Update quantities or remove a line.
         [HttpPost]
-        public IActionResult UpdateQuantity(int index, int quantity)
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(CartViewModel model, int? removeIndex)
         {
             var cart = GetCart();
-            if (index < 0 || index >= cart.Items.Count)
+
+            // Remove a line if removeIndex is provided
+            if (removeIndex.HasValue)
             {
-                return BadRequest();
+                int idx = removeIndex.Value;
+                if (idx >= 0 && idx < cart.Items.Count)
+                {
+                    cart.Items.RemoveAt(idx);
+                }
+
+                SaveCart(cart);
+                return RedirectToAction(nameof(Index));
             }
 
-            if (quantity <= 0)
+            // Otherwise, update quantities
+            if (model.Items != null && model.Items.Count == cart.Items.Count)
             {
-                cart.Items.RemoveAt(index);
-            }
-            else
-            {
-                cart.Items[index].Quantity = quantity;
+                for (int i = 0; i < cart.Items.Count; i++)
+                {
+                    var newQty = model.Items[i].Quantity;
+                    if (newQty < 1) newQty = 1;
+
+                    cart.Items[i].Quantity = newQty;
+                 }
             }
 
             SaveCart(cart);
-            return PartialView("~/Views/Cart/_CartLinesPartial.cshtml", cart);
+            return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Remove line.
-        /// </summary>
+        /// Remove a line and return updated cart lines partial.
         [HttpPost]
         public IActionResult Remove(int index)
         {
@@ -155,6 +144,7 @@ namespace FoodTruck.Web.Controllers
             return PartialView("~/Views/Cart/_CartLinesPartial.cshtml", cart);
         }
 
+        /// Clear the cart completely.
         public IActionResult Clear()
         {
             SaveCart(new CartViewModel());

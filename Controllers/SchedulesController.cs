@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
+
     /// Admin CRUD for truck schedules.
-    /// </summary>
+
     [Authorize(Roles = "Admin")]
     public class SchedulesController : Controller
     {
@@ -56,17 +56,35 @@ namespace FoodTruck.Web.Controllers
         // POST: Schedules/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TruckId,LocationId,StartTime,EndTime,IsActive")] Schedule schedule)
+        public async Task<IActionResult> Create([Bind("Id,TruckId,LocationId,IsActive")] Schedule schedule)
         {
-            if (schedule.EndTime <= schedule.StartTime)
-            {
-                ModelState.AddModelError(string.Empty, "End time must be after start time.");
-            }
-
+            // Remove any validation errors for properties we don't need from the form
+            ModelState.Remove("StartTime");
+            ModelState.Remove("EndTime");
+            ModelState.Remove("Truck");
+            ModelState.Remove("Location");
+            
             if (ModelState.IsValid)
             {
+                // Set schedule for all day today
+                var today = DateTime.Now.Date;
+                schedule.StartTime = today; // 12:00 AM (start of day)
+                schedule.EndTime = today.AddDays(1).AddSeconds(-1);   // 11:59:59 PM (end of day)
+                
                 _context.Add(schedule);
                 await _context.SaveChangesAsync();
+                
+                // Load the truck and location names for the message
+                var savedSchedule = await _context.Schedules
+                    .Include(s => s.Truck)
+                    .Include(s => s.Location)
+                    .FirstOrDefaultAsync(s => s.Id == schedule.Id);
+                
+                if (savedSchedule != null)
+                {
+                    TempData["SuccessMessage"] = $"Schedule created successfully! {savedSchedule.Truck.Name} is now scheduled at {savedSchedule.Location.Name} for today ({savedSchedule.StartTime:MM/dd/yyyy}).";
+                }
+                
                 return RedirectToAction(nameof(Index));
             }
 

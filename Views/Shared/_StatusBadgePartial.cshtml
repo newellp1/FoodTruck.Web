@@ -1,0 +1,16 @@
+@model FoodTruck.Web.Models.Enums.OrderStatus
+
+@{
+    string text = Model.ToString();
+    string css = Model switch
+    {
+        FoodTruck.Web.Models.Enums.OrderStatus.Pending      => "badge bg-secondary",
+        FoodTruck.Web.Models.Enums.OrderStatus.Preparing    => "badge bg-warning text-dark",
+        FoodTruck.Web.Models.Enums.OrderStatus.Ready        => "badge bg-info text-dark",
+        FoodTruck.Web.Models.Enums.OrderStatus.Completed    => "badge bg-success",
+        FoodTruck.Web.Models.Enums.OrderStatus.Cancelled    => "badge bg-danger",
+        _ => "badge bg-light text-dark"
+    };
+}
+
+<span class="@css">@text</span>

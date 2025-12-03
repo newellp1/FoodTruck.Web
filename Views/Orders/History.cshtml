@@ -1,0 +1,64 @@
+@model IEnumerable<FoodTruck.Web.Models.Order>
+
+@{
+    // Title shown in the browser tab and on the page
+    ViewData["Title"] = "My Orders";
+}
+
+<h2>My Orders</h2>
+
+<!-- If the user has no orders, show a friendly message -->
+@if (Model == null || !Model.Any())
+{
+    <p class="text-muted">There are no orders.</p>
+}
+else
+{
+    <!-- Table listing all past orders, newest first -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Order #</th>           <!-- Order identifier -->
+                <th>Date</th>              <!-- When the order was created -->
+                <th>Total</th>             <!-- Total amount -->
+                <th>Status</th>            <!-- Last known status -->
+                <th>Pickup ETA</th>        <!-- Pickup estimate (if available) -->
+                <th></th>                  <!-- Actions column (e.g., Track) -->
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <!-- Basic order data -->
+                <td>@order.Id</td>
+                <td>@order.CreatedAt.ToLocalTime()</td>
+                <td>@order.Total.ToString("C")</td>
+                <td>@order.Status</td>
+                <td>
+                    @if (order.PickupEta.HasValue)
+                    {
+                        @order.PickupEta.Value.ToLocalTime()
+                    }
+                    else
+                    {
+                        @:N/A
+                    }
+                </td>
+
+                <!-- Right-aligned action buttons -->
+                <td class="text-end">
+                    <!-- Link to track this order's status -->
+                    <a asp-action="Track"
+                       asp-route-id="@order.Id"
+                       class="btn btn-sm btn-outline-primary">
+                        Track
+                    </a>
+
+                    <!-- (Optional) You could add a "Reorder" button here later -->
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

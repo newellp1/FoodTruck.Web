@@ -14,15 +14,13 @@ namespace FoodTruck.Web.Models
         public int LocationId { get; set; }
         public Location Location { get; set; } = default!;
 
-        [Required]
         public DateTime StartTime { get; set; }
 
-        [Required]
         public DateTime EndTime { get; set; }
 
-        /// <summary>
+    
         /// Indicates which schedule is currently active for a truck.
-        /// </summary>
+    
         public bool IsActive { get; set; }
     }
 }

@@ -65,7 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const basePriceEl = document.getElementById("item-base-price");
         const linePriceEl = document.getElementById("item-line-price");
         const qtyInput = document.getElementById("item-quantity");
-        const modCheckboxes = document.querySelectorAll(".modifier-checkbox");
         const addBtn = document.getElementById("btn-add-to-cart");
         const notesEl = document.getElementById("item-notes");
         const form = document.getElementById("item-detail-form");
@@ -74,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const itemId = form.dataset.itemId;
         const basePrice = parseFloat(basePriceEl.textContent);
+        const modCheckboxes = form.querySelectorAll(".mod-checkbox");
 
         function updateLinePrice() {
             const qty = parseInt(qtyInput.value) || 1;
@@ -102,7 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 formData.append("menuItemId", itemId);
                 formData.append("quantity", qty);
                 formData.append("notes", notes);
-                selectedMods.forEach(m => formData.append("modifierIds", m));
 
                 const resp = await fetch(window.menuConfig.addToCartUrl, {
                     method: "POST",

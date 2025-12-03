@@ -1,47 +1,79 @@
 @model FoodTruck.Web.Models.ViewModels.CartViewModel
 
-@if (!Model.Items.Any())
+@if (Model.Items == null || !Model.Items.Any())
 {
-    <p>Your cart is empty.</p>
+    <p class="text-muted">Your cart is currently empty.</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Modifiers</th>
-                <th>Notes</th>
-                <th style="width: 120px;">Qty</th>
-                <th>Total</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        @for (int i = 0; i < Model.Items.Count; i++)
-        {
-            var item = Model.Items[i];
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.ModifierSummary</td>
-                <td>@item.Notes</td>
-                <td>
-                    <div class="input-group input-group-sm">
-                        <button class="btn btn-outline-secondary js-qty-minus" data-index="@i">-</button>
-                        <input class="form-control text-center js-qty" data-index="@i" value="@item.Quantity" />
-                        <button class="btn btn-outline-secondary js-qty-plus" data-index="@i">+</button>
-                    </div>
-                </td>
-                <td>$@item.LineTotal</td>
-                <td>
-                    <button class="btn btn-sm btn-danger js-remove-line" data-index="@i">Remove</button>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    <form asp-controller="Cart" asp-action="Update" method="post">
+        @Html.AntiForgeryToken()
 
-    <div class="text-end">
-        <strong>Subtotal: $@Model.Subtotal</strong>
-    </div>
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Notes</th>
+                    <th style="width: 120px;">Quantity</th>
+                    <th class="text-end" style="width: 120px;">Unit Price</th>
+                    <th class="text-end" style="width: 120px;">Line Total</th>
+                    <th class="text-end" style="width: 80px;">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    var line = Model.Items[i];
+
+                    <tr>
+                        <!-- Keep MenuItemId hidden so we know what line is what -->
+                        <input type="hidden" asp-for="Items[@i].MenuItemId" />
+
+                        <td>
+                            <strong>@line.Name</strong>
+                        </td>
+
+                        <td>
+                            <input asp-for="Items[@i].Quantity"
+                                   class="form-control form-control-sm"
+                                   min="1"
+                                   type="number" />
+                            <span asp-validation-for="Items[@i].Quantity" class="text-danger small"></span>
+                        </td>
+
+                        <td class="text-end">
+                            @line.UnitPrice.ToString("C")
+                        </td>
+
+                        <td class="text-end">
+                            @line.LineTotal.ToString("C")
+                        </td>
+
+                        <td class="text-end">
+                            <button type="submit"
+                                    name="removeIndex"
+                                    value="@i"
+                                    class="btn btn-sm btn-outline-danger">
+                                ×
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-end">Subtotal:</th>
+                    <th class="text-end">@Model.Subtotal.ToString("C")</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="text-end">
+            <!-- IMPORTANT: this is a BUTTON, not an <a> link -->
+            <button type="submit" class="btn btn-primary">
+                Update Quantities
+            </button>
+        </div>
+    </form>
 }

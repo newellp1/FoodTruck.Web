@@ -1,37 +1,134 @@
-﻿<!DOCTYPE html>
+﻿@using FoodTruck.Web.Models.ViewModels
+@{
+    var isAdmin = User.Identity?.IsAuthenticated == true && User.IsInRole("Admin");
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - FoodTruck</title>
+    <title>@ViewData["Title"] - Charr & Challaw</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Bootstrap Icons (for the cart icon) -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <!-- Site CSS (your custom colors/theme go here) -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-light border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">FoodTruck</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <!-- Brand + Logo -->
+                <a class="navbar-brand d-flex align-items-center"
+                   asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png"
+                         alt="Food Truck Logo"
+                         class="navbar-logo" />
+                    <span class="ms-3">About Us</span>
+                </a>
+
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
+                    <!-- Left side nav links (visible to everyone) -->
+                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Menu" asp-action="Index">Menu</a>
                         </li>
+
+                        @* Show "My Orders" ONLY if the user is NOT an Admin *@
+                        @if (!isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Orders" asp-action="History">My Orders</a>
+                            </li>
+                        }
+
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="History">My Orders</a>
+                            <a class="nav-link" asp-controller="Orders" asp-action="Find">Track Order</a>
                         </li>
-                        @* show admin/staff links based on roles *@
+
+                        @* ========= Admin-only dropdown ========= *@
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                href="#"
+                                id="adminDropdown"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                    Admin
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <a class="dropdown-item"
+                                        asp-controller="Admin" asp-action="Index">
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                        asp-controller="Trucks" asp-action="Index">
+                                            Trucks
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                        asp-controller="Locations" asp-action="Index">
+                                            Locations
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                        asp-controller="MenuCategories" asp-action="Index">
+                                            Menu Categories
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                        asp-controller="MenuItems" asp-action="Index">
+                                            Menu Items
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                        asp-controller="Schedules" asp-action="Index">
+                                            Schedules
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        @* ========= end Admin-only dropdown ========= *@
                     </ul>
+
+                    <!-- Login / Register -->
                     <partial name="_LoginPartial" />
-                    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary ms-3" aria-label="Cart">
-                        <span class="me-1 bi bi-cart"></span>
-                        <span id="cart-summary">
-                            @await Html.PartialAsync("_CartSummaryPartial", new FoodTruck.Web.Models.ViewModels.CartViewModel())
-                        </span>
-                    </a>
+
+                    <!-- Cart button -->
+                    @if (!isAdmin)
+                    {
+                        <a asp-controller="Cart" asp-action="Index"
+                        class="btn btn-outline-primary ms-3 d-flex align-items-center"
+                        aria-label="Cart">
+                            <span class="me-1 bi bi-cart"></span>
+                            <span id="cart-summary">
+                                @await Html.PartialAsync("_CartSummaryPartial", new CartViewModel())
+                            </span>
+                        </a>
+                    }
                 </div>
             </div>
         </nav>
@@ -43,6 +140,7 @@
         </main>
     </div>
 
+    <!-- Scripts -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/menu.js" asp-append-version="true"></script>

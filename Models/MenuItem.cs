@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FoodTruck.Web.Models
 {
@@ -17,10 +18,17 @@ namespace FoodTruck.Web.Models
 
         public bool IsAvailable { get; set; } = true;
 
-        [Required]
+        
+        [Display(Name = "MenuCategory")]
+        [Required(ErrorMessage = "Please choose a category.")]
         public int MenuCategoryId { get; set; }
-        public MenuCategory MenuCategory { get; set; } = default!;
 
-        public ICollection<MenuItemModifier> MenuItemModifiers { get; set; } = new List<MenuItemModifier>();
+        // Navigation only – NO [Required] here
+        public MenuCategory? MenuCategory { get; set; }
+
+        // Optional extras we added earlier
+        public string? ImagePath { get; set; }
+        public int DisplayOrder { get; set; } = 0;
+
     }
 }

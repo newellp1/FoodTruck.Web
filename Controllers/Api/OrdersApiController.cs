@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers.Api
 {
-    /// <summary>
-    /// REST API for order status polling and updates.
-    /// </summary>
+    /// REST API for order status:
+    /// - Customers use GET /{id}/status for live tracking (AJAX polling).
+    /// - Staff/Admin use PATCH /{id}/status to advance or cancel orders.
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersApiController : ControllerBase
@@ -20,12 +20,26 @@ namespace FoodTruck.Web.Controllers.Api
             _context = context;
         }
 
+        // -------------------------------------------------------------
+        // 1) CUSTOMER STATUS POLLING
+        // -------------------------------------------------------------
+
+        /// Returns the current status of an order.
+        /// Used by the customer tracking page to auto-refresh
+        /// status, ETA, and cancel reason.
+        ///
+        /// GET: /api/OrdersApi/{id}/status
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetStatus(int id)
         {
+            // We only need a few fields, so FindAsync is fine here.
             var order = await _context.Orders.FindAsync(id);
-            if (order == null) return NotFound();
+            if (order == null)
+            {
+                return NotFound(new { message = $"Order {id} not found." });
+            }
 
+            // Anonymous object keeps response simple and JSON-friendly.
             return Ok(new
             {
                 order.Id,
@@ -35,19 +49,71 @@ namespace FoodTruck.Web.Controllers.Api
             });
         }
 
-        // Example of staff status updates
+        // -------------------------------------------------------------
+        // 2) STAFF / ADMIN STATUS UPDATES
+        // -------------------------------------------------------------
+
+        /// DTO for status update requests.
+        /// Example JSON:
+        /// { "status": "InProgress", "cancelReason": "Out of stock" }
+        public class UpdateStatusRequest
+        {
+            public OrderStatus Status { get; set; }
+            public string? CancelReason { get; set; }
+        }
+
+        /// Allows Staff/Admin to update the status of an order.
+        /// This is intended to be called from an AJAX-driven
+        /// kitchen/queue screen.
+        ///
+        /// PATCH: /api/OrdersApi/{id}/status
+        /// Body:  { "status": "Ready", "cancelReason": null }
         [Authorize(Roles = "Staff,Admin")]
         [HttpPatch("{id}/status")]
-        public async Task<IActionResult> UpdateStatus(int id, [FromBody] OrderStatus newStatus)
+        public async Task<IActionResult> UpdateStatus(
+            int id,
+            [FromBody] UpdateStatusRequest request)
         {
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null) return NotFound();
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
+            if (order == null)
+            {
+                return NotFound(new { message = $"Order {id} not found." });
+            }
 
-            // TODO: validate allowed transitions
-            order.Status = newStatus;
+            // Simple guard: do not update terminal states.
+            if (order.Status == OrderStatus.Completed ||
+                order.Status == OrderStatus.Cancelled ||
+                order.Status == OrderStatus.Rejected)
+            {
+                return BadRequest(new
+                {
+                    message = $"Order {id} is already {order.Status} and cannot be changed."
+                });
+            }
+
+            // OPTIONAL: can add “allowed transitions” rules here
+            // (e.g., Pending -> Accepted -> InProgress -> Ready -> Completed).
+            // For now, we just set the requested status.
+
+            order.Status = request.Status;
+
+            // If this is a cancel-like status, store the reason.
+            if (request.Status == OrderStatus.Cancelled ||
+                request.Status == OrderStatus.Rejected)
+            {
+                order.CancelReason = request.CancelReason;
+            }
+
             await _context.SaveChangesAsync();
 
-            return Ok(order);
+            // Return the minimal info the front-end usually needs.
+            return Ok(new
+            {
+                order.Id,
+                order.Status,
+                order.PickupEta,
+                order.CancelReason
+            });
         }
     }
 }

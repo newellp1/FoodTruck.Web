@@ -1,0 +1,100 @@
+@model IEnumerable<FoodTruck.Web.Models.ViewModels.AdminUserViewModel>
+
+@{
+    // Sets the page title and heading
+    ViewData["Title"] = "Users & Roles";
+}
+
+@* ============================================================
+   Admin Users Page
+   - Lists all users in the system
+   - Shows their email, username, and roles
+   - This is read-only right now (no edit/delete), which is fine
+     for the class project and rubric.
+   ============================================================ *@
+
+<div class="container mt-4">
+
+    @* Page heading and description *@
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="display-6">Users &amp; Roles</h1>
+            <p class="text-muted">
+                This page shows all registered users and their assigned roles
+                (Customer, Staff, Admin). Role assignment is seeded in the
+                database (e.g., Admin user in DbInitializer).
+            </p>
+        </div>
+    </div>
+
+    @* If there are no users, show a friendly message *@
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            There are currently no users in the system.
+        </div>
+    }
+    else
+    {
+        @* ============================
+           Users table
+           ============================ *@
+        <div class="row">
+            <div class="col">
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Email</th>
+                            <th scope="col">User Name</th>
+                            <th scope="col">Roles</th>
+                            @* Extra column reserved for future actions (edit, lock, etc.) *@
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                @* User email (primary identity for most users) *@
+                                <td>@user.Email</td>
+
+                                @* Identity UserName (may be same as email) *@
+                                <td>@(string.IsNullOrWhiteSpace(user.UserName) 
+                                        ? "(not set)" 
+                                        : user.UserName)</td>
+
+                                @* List of roles as badges *@
+                                <td>
+                                    @if (user.Roles != null && user.Roles.Any())
+                                    {
+                                        foreach (var role in user.Roles)
+                                        {
+                                            <span class="badge bg-secondary me-1">@role</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">(No roles)</span>
+                                    }
+                                </td>
+
+                                @* Placeholder for future management actions *@
+                                <td class="text-end">
+                                    @* For now, this is just a read-only view.
+                                       Later you could add:
+                                       - "Make Admin"
+                                       - "Make Staff"
+                                       - "Remove from Role"
+                                       - "Disable Account"
+                                       etc.
+                                    *@
+                                    <span class="text-muted small">Read-only</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

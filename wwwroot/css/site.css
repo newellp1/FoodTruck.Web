@@ -1,31 +1,133 @@
+/* ===============================
+   Base HTML font settings
+   =============================== */
 html {
-  font-size: 14px;
+  font-size: 16px; /* Default font size for the website */
 }
 
+/* Increase font size for screens wider than 768px */
 @media (min-width: 768px) {
   html {
-    font-size: 16px;
+    font-size: 18px; /* More readable on desktops */
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* ===============================
+   Focus styles for inputs & buttons
+   Adds a custom outline glow when focused
+   =============================== */
+.btn:focus, 
+.btn:active:focus, 
+.btn-link.nav-link:focus, 
+.form-control:focus, 
+.form-check-input:focus {
+  box-shadow: 
+      0 0 0 0.1rem rgb(236, 233, 230),  /* inner color */
+      0 0 0 0.25rem #ffffff;       /* outer color */
 }
 
+/* ===============================
+   Ensure the page takes full height
+   =============================== */
 html {
   position: relative;
   min-height: 100%;
 }
 
+/* Add bottom padding so footer doesn't overlap content */
 body {
   margin-bottom: 60px;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+/* ===============================
+   Placeholder alignment for floating labels
+   Makes placeholder text align properly in Bootstrap forms
+   =============================== */
+.form-floating > .form-control-plaintext::placeholder, 
+.form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder, 
+.form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+/* ====================================
+   Custom FoodTruck Theme Styling
+   ==================================== */
+
+/* Navbar background color */
+.navbar {
+    background-color: #f5f3f2; /* light beige */
+}
+
+/* ===============================
+   Navbar text (brand + links)
+   Default color for logo text and links
+   =============================== */
+.navbar .navbar-brand,
+.navbar .nav-link,
+.navbar .nav-link:visited {
+    color: #3d2305 !important; /* dark brown */
+}
+
+/* ===============================
+   Navbar hover + active states
+   Link turns golden-orange when hovered
+   =============================== */
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: #e9ad2b !important; /* gold */
+}
+
+/* ===============================
+   Primary button styling
+   (Overrides Bootstrap’s default blue)
+   =============================== */
+.btn-primary {
+    background-color: #9e5423; /* golden yellow */
+    border-color: #ce9c14;
+}
+
+.btn-primary:hover {
+    background-color: #ce9c14; /* same, could darken if preferred */
+    border-color: #ce9c14;
+}
+
+/* ===============================
+   Page background color
+   =============================== */
+body {
+    background-color: #e7e1da; /* light cream background */
+}
+
+/* Subtle pattern background for the whole site */
+body {
+    background-color: #faf7f2;                         /* soft base color */
+    background-image: url("/images/pattern.svg");
+    background-repeat: repeat;                         /* tile pattern */
+    background-size: auto;                             /* or try 200px 200px for larger tiles */
+    color: #2b2b2b;                                    /* standard dark text */
+}
+
+/* ===============================
+   Navbar Logo Size
+   Controls the height of your logo image
+   =============================== */
+.navbar-brand img {
+    height: 110px;   /* Adjust to desired size */
+    width: auto;    /* Keep proportions; prevents distortion */
+}
+
+/* Adjust navbar height */
+.navbar {
+    height: 120px;       /* Change this value to make the bar taller/shorter */
+    padding-top: 10px;   /* Adjust spacing inside */
+    padding-bottom: 10px;
+}
+
+.navbar {
+    padding: 40px 1rem; /* Top/bottom 20px, left/right default */
 }

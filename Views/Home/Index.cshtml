@@ -5,7 +5,7 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to the Food Truck!</h1>
+    <h1 class="display-4" style="font-weight: 650;">Welcome to Charr & Challaw!</h1>
 
     @if (active != null)
     {
@@ -26,6 +26,50 @@
     }
     else
     {
-        <p>No upcoming schedules set. Please check back later.</p>
+        <p class="lead" style="font-weight: 600;">
+        Charr & Challaw is a family-owned food truck dedicated to bringing the vibrant flavors of Afghan food to your community. Our name reflects our passion: “Charr”, the perfect char-grilled kabob, and “Challaw”, the fragrant, fluffy rice that completes every authentic Afghan meal.</p>
+        <p class="lead" style="font-weight: 600;">
+        We pride ourselves on using fresh ingredients, traditional marinades, and time-honored cooking techniques passed down through generations. Every dish, whether it’s our tender chicken kabob, juicy beef tikka, or flavorful chapli kabob, is crafted with care and served with a warm Afghan hospitality that makes you feel right at home.</p>
+        <p class="lead" style="font-weight: 600;">
+        As a mobile kitchen, we travel to different locations each week, bringing bold flavor and fresh-cooked meals directly to you. Whether you’re grabbing lunch on the go or enjoying a family meal, Charr & Challaw is here to serve wholesome, satisfying food with heart.</p>
     }
+</div>
+
+
+<!-- ============================
+     Opening Hours section
+     Shown at the bottom of Home page
+     ============================ -->
+<div class="mt-5 pt-4 border-top">
+    <h3 class="fw-bold">Opening Hours</h3>
+    <p class="text-muted mb-3">
+        We’re currently open four days a week. Come see us!
+    </p>
+
+    <div class="row">
+        <!-- Left column: Open days -->
+        <div class="col-md-6 mb-3">
+            <h5>Open @(active != null ? "at " + active.Location.Name : "")</h5>
+            <ul class="list-unstyled">
+                <li>Thursday: 11:00 AM – 9:00 PM</li>
+                <li>Friday: 11:00 AM – 9:00 PM</li>
+                <li>Saturday: 11:00 AM – 9:00 PM</li>
+                <li>Sunday: 3:00 PM – 8:00 PM</li>
+            </ul>
+        </div>
+
+        <!-- Right column: Closed days -->
+        <div class="col-md-6 mb-3">
+            <h5>Closed</h5>
+            <ul class="list-unstyled">
+                <li>Monday</li>
+                <li>Tuesday</li>
+                <li>Wednesday</li>
+            </ul>
+        </div>
+    </div>
+
+    <p class="small text-muted">
+        * Hours may vary on holidays and special events.
+    </p>
 </div>

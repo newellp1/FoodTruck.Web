@@ -1,0 +1,273 @@
+@using FoodTruck.Web.Models.Enums
+@using FoodTruck.Web.Models.ViewModels
+@model OrderTrackingViewModel
+
+@{
+    ViewData["Title"] = "Track Order";
+}
+
+@* ============================
+   Order Tracking Page
+   Customers can revisit this page
+   to check order progress.
+   ============================ *@
+
+<div class="container my-4" data-order-id="@Model.OrderId">
+    @* Page heading *@
+    <h2 class="mb-3">Track Your Order</h2>
+
+    @* Basic order info *@
+    <div class="mb-3">
+        <p class="mb-1">
+            <strong>Order #:</strong> @Model.OrderId
+        </p>
+
+        <p class="mb-1">
+            <strong>Current Status:</strong>
+            @{
+                var statusClass = "bg-secondary";
+
+                switch (Model.Status)
+                {
+                    case OrderStatus.Pending:
+                        statusClass = "bg-warning text-dark";
+                        break;
+                    case OrderStatus.Accepted:
+                    case OrderStatus.Preparing:
+                        statusClass = "bg-info text-dark";
+                        break;
+                    case OrderStatus.Ready:
+                        statusClass = "bg-success";
+                        break;
+                    case OrderStatus.Completed:
+                        statusClass = "bg-success";
+                        break;
+                    case OrderStatus.Cancelled:
+                    case OrderStatus.Rejected:
+                        statusClass = "bg-danger";
+                        break;
+                }
+            }
+            <span class="badge @statusClass">
+                @Model.Status
+            </span>
+        </p>
+
+        <p class="mb-1">
+            <strong>Estimated Pickup Time:</strong>
+            @if (Model.PickupEta.HasValue)
+            {
+                @Model.FormattedEta
+            }
+            else
+            {
+                @:TBD
+            }
+        </p>
+
+        @if (Model.LastUpdated.HasValue)
+        {
+            <p class="text-muted mb-1">
+                <small>Last updated: @Model.LastUpdated.Value.ToLocalTime().ToString("g")</small>
+            </p>
+        }
+    </div>
+
+    @* If order was cancelled, show clear messaging *@
+    @if (Model.Status == OrderStatus.Cancelled || Model.Status == OrderStatus.Rejected)
+    {
+        <div class="alert alert-danger">
+            <strong>Your order was @Model.Status.ToString().ToLower().</strong>
+            @if (!string.IsNullOrWhiteSpace(Model.CancelReason))
+            {
+                <div>Reason: @Model.CancelReason</div>
+            }
+        </div>
+    }
+
+    @* Optional: Ready / Completed message *@
+    @if (Model.Status == OrderStatus.Ready)
+    {
+        <div class="alert alert-success">
+            <strong>Your order is ready for pickup!</strong><br />
+            Please bring your order number to the truck window.
+        </div>
+    }
+    else if (Model.Status == OrderStatus.Completed)
+    {
+        <div class="alert alert-success">
+            <strong>Your order is completed.</strong><br />
+            We hope you enjoyed your meal!
+        </div>
+    }
+
+    @* Progress steps visualization *@
+    <div class="mb-4">
+        <h4>Order Progress</h4>
+        <ul class="list-inline">
+            @{
+                // A simple list of statuses in logical order:
+                var steps = new[]
+                {
+                    OrderStatus.Pending,
+                    OrderStatus.Accepted,
+                    OrderStatus.Preparing,
+                    OrderStatus.Ready,
+                    OrderStatus.Completed
+                };
+
+                bool passedCurrent = false;
+            }
+
+            @foreach (var step in steps)
+            {
+                // Determine CSS class:
+                //  - completed: step is before or equal to current status
+                //  - upcoming: step comes after current
+                var liClass = "text-muted";
+                var badgeClass = "bg-light text-muted";
+
+                if (!passedCurrent)
+                {
+                    liClass = "text-primary";
+                    badgeClass = "bg-primary";
+                }
+
+                if (step == Model.Status)
+                {
+                    // After this step, remaining steps are upcoming
+                    passedCurrent = true;
+                }
+
+                <li class="list-inline-item me-3 @liClass">
+                    <span class="badge rounded-pill @badgeClass">
+                        @step
+                    </span>
+                </li>
+            }
+        </ul>
+    </div>
+
+
+    @* Cancellation form *@
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (Model.CanCustomerCancel)
+    {
+        <form asp-action="CancelFromTracking" method="post" class="mt-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.OrderId" />
+            <button type="submit" class="btn btn-danger">
+                Cancel My Order
+            </button>
+            <span class="text-muted ms-2">(You can cancel while your order is Pending or Accepted.)</span>
+        </form>
+    }
+    else
+    {
+        <p class="text-muted mt-3">
+            This order can no longer be cancelled because its status is <strong>@Model.Status</strong>.
+        </p>
+    }
+
+    @* Optional: show basic order summary if provided *@
+    @if (Model.OrderTotal.HasValue || (Model.ItemSummaries != null && Model.ItemSummaries.Any()))
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                Order Summary
+            </div>
+            <div class="card-body">
+                @if (Model.OrderTotal.HasValue)
+                {
+                    <p>
+                        <strong>Total:</strong> @Model.OrderTotal.Value.ToString("C")
+                    </p>
+                }
+
+                @if (Model.ItemSummaries != null && Model.ItemSummaries.Any())
+                {
+                    <ul class="mb-0">
+                        @foreach (var summary in Model.ItemSummaries)
+                        {
+                            <li>@summary</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        Item details are not available for this view.
+                    </p>
+                }
+            </div>
+        </div>
+    }
+
+    @* Navigation buttons *@
+    <div class="my-3">
+        <a asp-controller="Menu"
+           asp-action="Index"
+           class="btn btn-link">
+            Back to Menu
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    
+    <script>
+        (function () {
+            const container = document.querySelector('[data-order-id]');
+            if (!container) return;
+
+            const orderId = container.getAttribute('data-order-id');
+            const statusBadge = container.querySelector('.badge');
+            const etaElement = container.querySelector('p strong + span, p strong + text');
+
+            // Maps raw status string to a Bootstrap class
+            function getStatusClass(status) {
+                status = status.toLowerCase();
+                if (status === 'pending') return 'badge bg-warning text-dark';
+                if (status === 'accepted' || status === 'inprogress') return 'badge bg-info text-dark';
+                if (status === 'ready' || status === 'completed') return 'badge bg-success';
+                if (status === 'cancelled' || status === 'rejected') return 'badge bg-danger';
+                return 'badge bg-secondary';
+            }
+
+            async function refreshStatus() {
+                try {
+                    const response = await fetch(`/api/orders/${orderId}`);
+                    if (!response.ok) {
+                        // If endpoint not implemented yet, just stop silently
+                        return;
+                    }
+
+                    const data = await response.json();
+
+                    if (data.status && statusBadge) {
+                        statusBadge.textContent = data.status;
+                        statusBadge.className = getStatusClass(data.status);
+                    }
+
+                    // If your API returns pickupEta, you could update the ETA text here as well.
+                    // Example (if you return local time or ISO string):
+                    // if (data.pickupEta && etaElement) { ... }
+
+                } catch (e) {
+                    // Ignore errors (offline, server not ready, etc.)
+                }
+            }
+
+            // Poll every 15 seconds
+            setInterval(refreshStatus, 15000);
+        })();
+    </script>
+}

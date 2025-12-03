@@ -1,24 +1,132 @@
-@model FoodTruck.Web.Models.ViewModels.OrderTrackingViewModel
+@using FoodTruck.Web.Models.Enums
+@using FoodTruck.Web.Models.ViewModels
+@model OrderTrackingViewModel
 
 @{
     ViewData["Title"] = "Order Confirmation";
 }
 
-<h2>Thank you!</h2>
-<p>Your order number is <strong>@Model.OrderId</strong>.</p>
+@* ============================
+   Order Confirmation Page
+   Shown right after checkout
+   ============================ *@
 
-<p>Estimated pickup: @Model.PickupEta?.ToLocalTime().ToString("g")</p>
+<div class="container my-4">
+    @* Page heading *@
+    <h2 class="mb-3">Thank you! Your order is confirmed.</h2>
 
-<div id="order-status"
-     data-order-id="@Model.OrderId">
-    <p>Status: <span id="order-status-text">@Model.Status</span></p>
+    @* Basic order metadata: ID and status *@
+    <div class="mb-3">
+        <p class="mb-1">
+            <strong>Order #:</strong> @Model.OrderId
+        </p>
+
+        <p class="mb-1">
+            <strong>Status:</strong>
+            @* Status badge color depends on status value *@
+            @{
+                var statusClass = "bg-secondary";
+
+                switch (Model.Status)
+                {
+                    case OrderStatus.Pending:
+                        statusClass = "bg-warning text-dark";
+                        break;
+                    case OrderStatus.Accepted:
+                    case OrderStatus.Preparing:
+                        statusClass = "bg-info text-dark";
+                        break;
+                    case OrderStatus.Ready:
+                        statusClass = "bg-success";
+                        break;
+                    case OrderStatus.Completed:
+                        statusClass = "bg-success";
+                        break;
+                    case OrderStatus.Cancelled:
+                    case OrderStatus.Rejected:
+                        statusClass = "bg-danger";
+                        break;
+                }
+            }
+
+            <span class="badge @statusClass">
+                @Model.Status
+            </span>
+        </p>
+
+        @* Show ETA using the helper property if you implemented it,
+           otherwise fall back to raw date/time *@
+        <p class="mb-1">
+            <strong>Estimated Pickup Time:</strong>
+            @if (Model.PickupEta.HasValue)
+            {
+                @Model.FormattedEta
+            }
+            else
+            {
+                @:TBD
+            }
+        </p>
+    </div>
+
+    @* If the order is cancelled, show the reason in a red alert *@
+    @if (Model.Status == OrderStatus.Cancelled || Model.Status == OrderStatus.Rejected)
+    {
+        <div class="alert alert-danger">
+            <strong>This order has been @Model.Status.ToString().ToLower().</strong>
+            @if (!string.IsNullOrWhiteSpace(Model.CancelReason))
+            {
+                <div>Reason: @Model.CancelReason</div>
+            }
+        </div>
+    }
+
+    @* Optional: Show order total and items if provided on the ViewModel *@
+    @if (Model.OrderTotal.HasValue || (Model.ItemSummaries != null && Model.ItemSummaries.Any()))
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                Order Summary
+            </div>
+            <div class="card-body">
+                @if (Model.OrderTotal.HasValue)
+                {
+                    <p>
+                        <strong>Total:</strong> @Model.OrderTotal.Value.ToString("C")
+                    </p>
+                }
+
+                @if (Model.ItemSummaries != null && Model.ItemSummaries.Any())
+                {
+                    <ul class="mb-0">
+                        @foreach (var summary in Model.ItemSummaries)
+                        {
+                            <li>@summary</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        Item details are not available for this view.
+                    </p>
+                }
+            </div>
+        </div>
+    }
+
+    @* Call to action: go to tracking page *@
+    <div class="my-3">
+        <a asp-action="Track"
+           asp-route-id="@Model.OrderId"
+           class="btn btn-primary">
+            Track My Order
+        </a>
+
+        <a asp-controller="Menu"
+           asp-action="Index"
+           class="btn btn-link">
+            Back to Menu
+        </a>
+    </div>
 </div>
-
-@section Scripts {
-    <script>
-        window.orderStatusConfig = {
-            orderId: @Model.OrderId,
-            statusUrl: '@Url.Action(null, "OrdersApi", new { area = "", id = Model.OrderId }, "https")'.replace("OrdersApi", "api/Orders")
-        };
-    </script>
-}

@@ -1,0 +1,147 @@
+@using FoodTruck.Web.Models.Enums
+@model FoodTruck.Web.Models.Order
+
+@{
+    ViewData["Title"] = "Edit Order";
+}
+
+<h2>Edit Order</h2>
+
+@* ============================================================
+   Summary header
+   Shows the Order ID and basic info for quick reference.
+   ============================================================ *@
+<div class="alert alert-secondary">
+    <strong>Order #@Model.Id</strong>
+    <span class="ms-3">
+        Placed: @Model.CreatedAt.ToLocalTime()
+    </span>
+    <span class="ms-3">
+        Total: @Model.Total.ToString("C")
+    </span>
+</div>
+
+@* ============================================================
+   Edit form
+   - This form posts back to the EditOrder action.
+   - Make sure your StaffController (or OrdersController)
+     has a POST EditOrder(int id, Order updatedOrder) action.
+   ============================================================ *@
+<form asp-action="EditOrder" method="post">
+    @* Hidden field for primary key so the POST action knows which order to update *@
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row">
+        <div class="col-md-6">
+            @* =========================
+               Contact Info
+               ========================= *@
+            <div class="mb-3">
+                <label asp-for="ContactName" class="form-label">Customer Name</label>
+                <input asp-for="ContactName" class="form-control" />
+                <span asp-validation-for="ContactName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactPhone" class="form-label">Customer Phone</label>
+                <input asp-for="ContactPhone" class="form-control" />
+                <span asp-validation-for="ContactPhone" class="text-danger"></span>
+            </div>
+
+            @* =========================
+               Order Status + ETA
+               ========================= *@
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">Status</label>
+                @* Dropdown based on OrderStatus enum *@
+                <select asp-for="Status"
+                        class="form-select"
+                        asp-items="Html.GetEnumSelectList<OrderStatus>()">
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PickupEta" class="form-label">Pickup ETA</label>
+                @* Use datetime-local; controller should convert to UTC before saving *@
+                <input asp-for="PickupEta" type="datetime-local" class="form-control" />
+                <span class="form-text">
+                    Optional. Update if the preparation time changes.
+                </span>
+                <span asp-validation-for="PickupEta" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CancelReason" class="form-label">Cancel Reason</label>
+                <textarea asp-for="CancelReason" class="form-control" rows="3"></textarea>
+                <span class="form-text">
+                    Only required if the order is cancelled.
+                </span>
+                <span asp-validation-for="CancelReason" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            @* =========================
+               Order Items (read-only)
+               ========================= *@
+            <h4>Items</h4>
+
+            @if (Model.Items != null && Model.Items.Any())
+            {
+                <table class="table table-sm table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-end">Line Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var line in Model.Items)
+                    {
+                        var lineTotal = line.UnitPrice * line.Quantity;
+                        <tr>
+                            <td>@line.MenuItem?.Name</td>
+                            <td class="text-center">@line.Quantity</td>
+                            <td class="text-end">@line.UnitPrice.ToString("C")</td>
+                            <td class="text-end">@lineTotal.ToString("C")</td>
+                            <td>
+                                @* Show notes if any *@
+                                @if (!string.IsNullOrWhiteSpace(line.Notes))
+                                {
+                                    <div><strong>Notes:</strong> @line.Notes</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">
+                    This order has no items.
+                </p>
+            }
+        </div>
+    </div>
+
+    @* =========================
+       Save / Cancel buttons
+       ========================= *@
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            Save Changes
+        </button>
+        <a asp-action="Queue" class="btn btn-secondary ms-2">
+            Back to Queue
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    @* Enables client-side validation *@
+    <partial name="_ValidationScriptsPartial" />
+}

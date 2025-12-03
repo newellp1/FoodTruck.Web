@@ -1,0 +1,109 @@
+@using FoodTruck.Web.Models
+@using FoodTruck.Web.Models.Enums
+@model IEnumerable<Order>
+
+@{
+    ViewData["Title"] = "Order Queue";
+}
+
+<h2>Order Queue</h2>
+
+<p class="text-muted">
+    This view is for <strong>Staff/Admin</strong> to manage all active orders.
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        There are currently no orders in the queue.
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Placed</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th class="text-end">Total</th>
+                <th>Status</th>
+                <th>Pickup ETA</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                @* Order ID *@
+                <td>@order.Id</td>
+
+                @* Created date/time in local time *@
+                <td>@order.CreatedAt.ToLocalTime()</td>
+
+                @* Contact info *@
+                <td>@order.ContactName</td>
+                <td>@order.ContactPhone</td>
+
+                @* Total formatted as currency *@
+                <td class="text-end">
+                    @order.Total.ToString("C")
+                </td>
+
+                @* Status badge using the shared partial *@
+                <td>
+                    @await Html.PartialAsync("_StatusBadgePartial", order.Status)
+                </td>
+
+                @* Pickup ETA, if available *@
+                <td>
+                    @if (order.PickupEta.HasValue)
+                    {
+                        @order.PickupEta.Value.ToLocalTime()
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not set</span>
+                    }
+                </td>
+
+                @* Action buttons: View / Edit status/order *@
+                <td class="text-end">
+                    @* Details page (if you have it) *@
+                    <a asp-action="OrderDetails"
+                       asp-route-id="@order.Id"
+                       class="btn btn-sm btn-info me-1">
+                        Details
+                    </a>
+
+                    @* Edit order page (like EditOrder.cshtml we built) *@
+                    <a asp-action="EditOrder"
+                       asp-route-id="@order.Id"
+                       class="btn btn-sm btn-secondary me-1">
+                        Edit
+                    </a>
+
+                    @* Optional: quick status links, if you wire them up in StaffController
+                       Example:
+                       <a asp-action="AdvanceStatus"
+                          asp-route-id="@order.Id"
+                          class="btn btn-sm btn-primary">Next Status</a>
+                    *@
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    @* Optional: Auto-refresh the queue every 30 seconds *@
+    <script>
+        // Simple auto-refresh so staff always see recent changes
+        setTimeout(function () {
+            window.location.reload();
+        }, 30000); // 30,000 ms = 30 seconds
+    </script>
+}

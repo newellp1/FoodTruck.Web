@@ -6,19 +6,35 @@
 
 <h2>Create Category</h2>
 
+@* ============================================================
+   Form to create a new MenuCategory.
+   Supports:
+   - Name
+   - Description
+   - DisplayOrder
+   - Optional ParentCategory (for sub-categories)
+   ============================================================ *@
+
 <form asp-action="Create" method="post">
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
     <div class="mb-3">
         <label asp-for="DisplayOrder" class="form-label"></label>
         <input asp-for="DisplayOrder" class="form-control" />
         <span asp-validation-for="DisplayOrder" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary">Create</button>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </form>
 

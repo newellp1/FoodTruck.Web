@@ -1,37 +1,140 @@
 @model IEnumerable<FoodTruck.Web.Models.MenuItem>
 
 @{
-    ViewData["Title"] = "Menu Items";
+    ViewData["Title"] = "Manage Menu Items";
+    var count = Model?.Count() ?? 0;
 }
 
-<h2>Menu Items</h2>
+<h2>Manage Menu Items</h2>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New Item</a>
 </p>
 
-<table class="table table-striped">
+<p class="text-muted">
+    This list shows <strong>all</strong> items (available and unavailable).
+    Unavailable items are marked with a red badge.
+</p>
+
+<p class="fw-light">
+    <strong>Total items loaded:</strong> @count
+</p>
+
+<table class="table table-striped table-bordered align-middle">
     <thead>
         <tr>
-            <th>Name</th>
+            <th>Photo</th>   @* NEW: image thumbnail column *@
             <th>Category</th>
-            <th>Price</th>
-            <th>Available</th>
-            <th></th>
+            <th>Name</th>
+            <th>Description</th>
+            <th class="text-end">Price</th>
+            <th>Available?</th>
+            <th class="text-end">Actions</th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            // Build a safe image Path
+            string? imageSrc = null;
+            if (!string.IsNullOrEmpty(item.ImagePath))   // change to ImagePath if that's your property
+            {
+                if (item.ImagePath.StartsWith("http", StringComparison.OrdinalIgnoreCase) ||
+                    item.ImagePath.StartsWith("/"))
+                {
+                    // Already a full Path or root-relative path
+                    imageSrc = item.ImagePath;
+                }
+                else
+                {
+                    // Assume it's a file name in wwwroot/images
+                    imageSrc = Url.Content("~/images/" + item.ImagePath);
+                }
+            }
+
+            <tr>
+                <td>
+                    @if (imageSrc != null)
+                    {
+                        <img src="@imageSrc"
+                             alt="@item.Name"
+                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px;" />
+                    }
+                    else
+                    {
+                        <span class="text-muted small">(No image)</span>
+                    }
+                </td>
+
+                <td>
+                    @{
+                        var cat = item.MenuCategory;
+                        if (cat != null && cat.ParentCategory != null)
+                        {
+                            @($"{cat.ParentCategory.Name} \u2192 {cat.Name}")
+                        }
+                        else if (cat != null)
+                        {
+                            @cat.Name
+                        }
+                        else
+                        {
+                            @:<span class="text-muted">(No Category)</span>
+                        }
+                    }
+                </td>
+
+                <td>@item.Name</td>
+
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(item.Description))
+                    {
+                        if (item.Description.Length > 80)
+                        {
+                            @($"{item.Description.Substring(0, 80)}...")
+                        }
+                        else
+                        {
+                            @item.Description
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">(No description)</span>
+                    }
+                </td>
+
+                <td class="text-end">@item.Price.ToString("C")</td>
+
+                <td>
+                    @if (item.IsAvailable)
+                    {
+                        <span class="badge bg-success">Available</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Unavailable</span>
+                    }
+                </td>
+
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@item.Id"
+                       class="btn btn-sm btn-secondary me-1">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Id"
+                       class="btn btn-sm btn-info me-1">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id"
+                       class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    }
+    else
     {
         <tr>
-            <td>@item.Name</td>
-            <td>@item.MenuCategory?.Name</td>
-            <td>$@item.Price</td>
-            <td>@item.IsAvailable</td>
-            <td class="text-end">
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-secondary">Edit</a>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+            <td colspan="7" class="text-center text-muted">
+                There are no menu items yet. Use "Create New Item" to add one.
             </td>
         </tr>
     }

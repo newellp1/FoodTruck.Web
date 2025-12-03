@@ -16,6 +16,8 @@ namespace FoodTruck.Web.Models
         [Required, StringLength(20)]
         public string ContactPhone { get; set; } = string.Empty;
 
+        public string? ContactEmail { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? PickupEta { get; set; }

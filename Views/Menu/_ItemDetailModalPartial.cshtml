@@ -1,54 +1,47 @@
 @model FoodTruck.Web.Models.MenuItem
 
-@{
-    var groupedMods = Model.MenuItemModifiers
-        .GroupBy(m => m.Modifier.Type)
-        .ToDictionary(g => g.Key, g => g.ToList());
-}
-
 <div class="modal-header">
     <h5 class="modal-title" id="itemDetailLabel">@Model.Name</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
+
 <div class="modal-body">
+    @* Optional image, if you have ImagePath on the model *@
+    @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+    {
+        <div class="text-center mb-3">
+            <img src="@Model.ImagePath"
+                 alt="@Model.Name"
+                 class="img-fluid rounded"
+                 style="max-height: 220px; object-fit: cover;" />
+        </div>
+    }
+
     <p>@Model.Description</p>
-    <p class="fw-bold">Base price: $<span id="item-base-price">@Model.Price</span></p>
+
+    <p class="fw-bold">
+        Base price: $<span id="item-base-price">@Model.Price.ToString("0.00")</span>
+    </p>
 
     <form id="item-detail-form" data-item-id="@Model.Id">
-        @foreach (var group in groupedMods)
-        {
-            <fieldset class="mb-3">
-                <legend>@group.Key</legend>
-                @foreach (var mim in group.Value)
-                {
-                    <div class="form-check">
-                        <input class="form-check-input modifier-checkbox"
-                               type="checkbox"
-                               value="@mim.ModifierId"
-                               id="mod_@mim.ModifierId"
-                               data-pricedelta="@mim.Modifier.PriceDelta" />
-                        <label class="form-check-label" for="mod_@mim.ModifierId">
-                            @mim.Modifier.Name
-                            (@mim.Modifier.PriceDelta.ToString("+#0.00;-#0.00;0"))
-                        </label>
-                    </div>
-                }
-            </fieldset>
-        }
-
         <div class="mb-3">
             <label for="item-quantity" class="form-label">Quantity</label>
-            <input id="item-quantity" type="number" min="1" value="1" class="form-control" />
+            <input id="item-quantity"
+                   type="number"
+                   min="1"
+                   value="1"
+                   class="form-control" />
         </div>
 
         <div class="mb-3">
             <label for="item-notes" class="form-label">Notes</label>
-            <textarea id="item-notes" class="form-control" rows="2"></textarea>
+            <textarea id="item-notes" class="form-control" rows="2"
+                      placeholder="Add any special requests here"></textarea>
         </div>
 
         <p class="fw-bold">
             Line price:
-            $<span id="item-line-price">@Model.Price</span>
+            $<span id="item-line-price">@Model.Price.ToString("0.00")</span>
         </p>
 
         <button type="button" class="btn btn-primary" id="btn-add-to-cart">
