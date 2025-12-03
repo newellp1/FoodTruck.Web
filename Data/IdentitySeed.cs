@@ -1,6 +1,7 @@
 using FoodTruck.Web.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FoodTruck.Web.Data
@@ -12,8 +13,12 @@ namespace FoodTruck.Web.Data
             using var scope = app.ApplicationServices.CreateScope();
             var services = scope.ServiceProvider;
 
+            var context = services.GetRequiredService<ApplicationDbContext>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+            // Ensure database is created first
+            await context.Database.EnsureCreatedAsync();
 
             const string adminRoleName = "Admin";
             if (!await roleManager.RoleExistsAsync(adminRoleName))

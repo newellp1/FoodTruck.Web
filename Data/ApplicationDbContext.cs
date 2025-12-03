@@ -51,14 +51,35 @@ namespace FoodTruck.Web.Data
         /// Line items inside an order (one row per menu item in the order).
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
+        /// Tags that can be applied to menu items (e.g., "Spicy", "Vegetarian").
+        public DbSet<Tag> Tags => Set<Tag>();
+
+        /// <summary>
         /// Model configuration hook.
         /// Called by EF Core to build the model (tables, keys, relationships, etc.).
         /// We always call base.OnModelCreating(builder) so Identity is configured,
         /// then add our own FoodTruck-specific configuration.
+        /// </summary>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             // Configure Identity (AspNetUsers, AspNetRoles, etc.)
             base.OnModelCreating(builder);
+
+            // ============================
+            // Many-to-Many: MenuItem ↔ Tag
+            // ============================
+            builder.Entity<MenuItemTag>()
+                .HasKey(mt => new { mt.MenuItemId, mt.TagId }); // Composite primary key
+
+            builder.Entity<MenuItemTag>()
+                .HasOne(mt => mt.MenuItem)
+                .WithMany(m => m.MenuItemTags)
+                .HasForeignKey(mt => mt.MenuItemId);
+
+            builder.Entity<MenuItemTag>()
+                .HasOne(mt => mt.Tag)
+                .WithMany(t => t.MenuItemTags)
+                .HasForeignKey(mt => mt.TagId);
 
             // ============================
             // Self-referencing MenuCategory

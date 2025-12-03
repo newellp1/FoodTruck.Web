@@ -31,10 +31,10 @@ namespace FoodTruck.Web.Data
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
             // ----------------------------------------------------
-            // 1) Apply EF Core migrations (if any)
-            //    This ensures the database schema is up to date.
+            // 1) Ensure database is created with current schema
+            //    This creates the database and all tables if they don't exist.
             // ----------------------------------------------------
-            await context.Database.MigrateAsync();
+            await context.Database.EnsureCreatedAsync();
 
             // ----------------------------------------------------
             // 2) Ensure core roles exist

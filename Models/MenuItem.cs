@@ -30,5 +30,8 @@ namespace FoodTruck.Web.Models
         public string? ImagePath { get; set; }
         public int DisplayOrder { get; set; } = 0;
 
+        // Navigation property for many-to-many relationship with Tags
+        public ICollection<MenuItemTag> MenuItemTags { get; set; } = new List<MenuItemTag>();
+
     }
 }

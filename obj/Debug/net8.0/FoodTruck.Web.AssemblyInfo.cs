@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FoodTruck.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cf827eae9712736fa7c419331b7e928342685440")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a74d334fd543e0525ee8d0f6cd7f32cbb1a01e9b")]
 [assembly: System.Reflection.AssemblyProductAttribute("FoodTruck.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FoodTruck.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

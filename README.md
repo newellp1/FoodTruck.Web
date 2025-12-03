@@ -171,8 +171,8 @@ Key entities:
 
 **Database**
 
-- **SQL Server** (LocalDB or full SQL Server)
-- Code-first migrations via **EF Core**
+- **SQLite** (''FoodTruckDb.db'')
+- Automatically created on first run using Code-first approach.
 
 **Development Environment**
 
@@ -188,6 +188,11 @@ Key entities:
 - .NET SDK installed (version required by your project, e.g., .NET 7 or .NET 8).
 - SQL Server or LocalDB installed and reachable.
 - Connection string set in `appsettings.json` under `ConnectionStrings:DefaultConnection`.
+
+## Default Admin Account
+
+- **Email:** newellp1@etsu.edu
+- **Password:** Admin123!
 
 Example (LocalDB):
 

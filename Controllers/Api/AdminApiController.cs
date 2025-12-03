@@ -221,7 +221,7 @@ namespace FoodTruck.Web.Controllers.Api
         {
             var items = await _context.MenuItems
                 .Include(mi => mi.MenuCategory)
-                .OrderBy(mi => mi.MenuCategory.DisplayOrder)
+                .OrderBy(mi => mi.MenuCategory!.DisplayOrder)
                 .ThenBy(mi => mi.Name)
                 .ToListAsync();
 

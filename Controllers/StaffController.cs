@@ -144,12 +144,13 @@ namespace FoodTruck.Web.Controllers
             }
 
             // If validation failed, reload the items
-            order = await _context.Orders
+            var reloadedOrder = await _context.Orders
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.MenuItem)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
-            return View(order);
+            if (reloadedOrder == null) return NotFound();
+            return View(reloadedOrder);
         }
     }
 }

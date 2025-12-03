@@ -127,14 +127,14 @@ namespace FoodTruck.Web.Controllers
         // Revalidate items & recalc totals from the database
         decimal total = 0;
 
-        foreach (var line in cart.Items)
+        foreach (var line in cart.Items ?? new List<CartItemViewModel>())
         {
             var menuItem = await _context.MenuItems
                 .FirstOrDefaultAsync(mi => mi.Id == line.MenuItemId && mi.IsAvailable);
 
             if (menuItem == null)
             {
-                ModelState.AddModelError(string.Empty, $"Item '{line.Name}' is no longer available.");
+                ModelState.AddModelError(string.Empty, $"Item '{line.Name ?? "Unknown"}' is no longer available.");
                 return View(model);
             }
 
@@ -162,7 +162,7 @@ namespace FoodTruck.Web.Controllers
         await _context.SaveChangesAsync();
 
         // Create OrderItems
-        foreach (var line in cart.Items)
+        foreach (var line in cart.Items ?? new List<CartItemViewModel>())
         {
             var orderItem = new OrderItem
             {

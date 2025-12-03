@@ -1,0 +1,65 @@
+@model FoodTruck.Web.Models.Tag
+
+@{
+    ViewData["Title"] = "Tag Details";
+}
+
+<div class="container mt-4">
+    <h2><i class="bi bi-tag"></i> Tag Details</h2>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>@Model.Name <span class="badge bg-@Model.BadgeColor">@Model.Name</span></h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Name:</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
+
+                <dt class="col-sm-3">Badge Color:</dt>
+                <dd class="col-sm-9">@Model.BadgeColor</dd>
+
+                <dt class="col-sm-3">Display Order:</dt>
+                <dd class="col-sm-9">@Model.DisplayOrder</dd>
+
+                <dt class="col-sm-3">Menu Items:</dt>
+                <dd class="col-sm-9">@Model.MenuItemTags.Count item(s)</dd>
+            </dl>
+        </div>
+    </div>
+
+    @if (Model.MenuItemTags.Any())
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Menu Items with this Tag</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var menuItemTag in Model.MenuItemTags)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <strong>@menuItemTag.MenuItem.Name</strong>
+                                <small class="text-muted">- @menuItemTag.MenuItem.MenuCategory?.Name</small>
+                            </span>
+                            <span class="badge bg-primary rounded-pill">@menuItemTag.MenuItem.Price.ToString("C")</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
