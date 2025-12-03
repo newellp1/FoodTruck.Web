@@ -55,7 +55,7 @@ Key entities:
   - Drives whether ordering is open and which location/menu is currently active.
 
 - **MenuCategory**
-  - Logical grouping of menu items (e.g., “Tacos”, “Drinks”).
+  - Logical grouping of menu items (e.g., “Entree”, “Side”, "Beverage").
   - Properties: `Id`, `Name`, `DisplayOrder`.
   - Relationships: One-to-many with `MenuItem`.
 

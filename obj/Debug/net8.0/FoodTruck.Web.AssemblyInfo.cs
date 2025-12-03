@@ -10,11 +10,12 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("aspnet-FoodTruck.Web-26f37a70-e264-4cbb-840a-4627d0e5fcf5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("FoodTruck.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46c6a9b9d0ca437e946b946f9071685ace96e71d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5a39017ee7ebfa588ab94033f21f6bfa49bc4a31")]
 [assembly: System.Reflection.AssemblyProductAttribute("FoodTruck.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FoodTruck.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
