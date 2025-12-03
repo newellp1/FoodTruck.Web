@@ -189,14 +189,14 @@ Key entities:
 - SQL Server or LocalDB installed and reachable.
 - Connection string set in `appsettings.json` under `ConnectionStrings:DefaultConnection`.
 
+## AI Use 
+
+- Used AI to generate image for the logo.
+- I had issues with restricting page where only Admin can edit orders.
+- I was getting null reference exception in my CartController when adding items.  Asked for help in understanding why this is happening and how to debug it.
+
 ## Default Admin Account
 
 - **Email:** newellp1@etsu.edu
 - **Password:** Admin123!
 
-Example (LocalDB):
-
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=FoodTruckDb;Trusted_Connection=True;MultipleActiveResultSets=true"
-}
