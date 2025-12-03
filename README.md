@@ -32,7 +32,7 @@ The application is built as a **term project** to integrate the main concepts fr
 
 ## Data Model Summary
 
-The data model uses **Entity Framework Core** with SQL Server and includes multiple interconnected entities and at least one many-to-many relationship.
+The data model uses **Entity Framework Core** with SQLite and includes multiple interconnected entities and at least one many-to-many relationship.
 
 Key entities:
 
@@ -60,10 +60,24 @@ Key entities:
   - Relationships: One-to-many with `MenuItem`.
 
 - **MenuItem**
-  - Individual menu entries (e.g., “Chicken Taco”).
+  - Individual menu entries (e.g., "Challaw").
   - Properties: `Id`, `Name`, `Description`, `Price`, `IsAvailable`, `MenuCategoryId`.
   - Relationships:
     - Many-to-one with `MenuCategory`.
+    - Many-to-many with `Tag` through `MenuItemTag`.
+
+- **Tag**
+  - Represents labels/categories for menu items (e.g., "Spicy", "Vegetarian", "Gluten-Free").
+  - Properties: `Id`, `Name`, `BadgeColor`, `DisplayOrder`.
+  - Relationships:
+    - Many-to-many with `MenuItem` through `MenuItemTag`.
+
+- **MenuItemTag** (Join Table)
+  - Implements the many-to-many relationship between MenuItem and Tag.
+  - Properties: `MenuItemId`, `TagId` (composite primary key).
+  - Relationships:
+    - Many-to-one with `MenuItem`.
+    - Many-to-one with `Tag`.
 
 - **Order**
   - Represents a placed order.
@@ -94,7 +108,7 @@ Key entities:
   - The **active truck** and its **current location** (or the next upcoming schedule).
   - A **menu filtered** to items that are available now (`IsAvailable = true`).
 - I can **search** menu items by name/description and **filter by category**.
-- I can view **item details** and select valid 
+- I can view **item details** including tags like "Spicy" or "Vegetarian". 
 
 ### 2. Cart & Checkout
 
@@ -159,7 +173,7 @@ Key entities:
 - **.NET Core** / **ASP.NET Core MVC**
 - **C#** (server-side code)
 - **Razor** (server-side view engine / templating)
-- **Entity Framework Core** (ORM for SQL Server)
+- **Entity Framework Core** (ORM for SQLite)
 - **ASP.NET Core Identity** (authentication and roles)
 
 **Client-side**
@@ -171,7 +185,7 @@ Key entities:
 
 **Database**
 
-- **SQLite** (''FoodTruckDb.db'')
+- **SQLite** (`FoodTruckDb.db`)
 - Automatically created on first run using Code-first approach.
 
 **Development Environment**
@@ -186,8 +200,8 @@ Key entities:
 ### Prerequisites
 
 - .NET SDK installed (version required by your project, e.g., .NET 7 or .NET 8).
-- SQL Server or LocalDB installed and reachable.
-- Connection string set in `appsettings.json` under `ConnectionStrings:DefaultConnection`.
+- No additional database installation required (uses SQLite with file-based database).
+- Database is automatically created on first run in the project directory.
 
 ## AI Use 
 
