@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace FoodTruck.Web.Models
 {
+    // Represents a menu item offered by the food truck.
     public class MenuItem
     {
         public int Id { get; set; }

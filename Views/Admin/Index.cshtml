@@ -13,6 +13,8 @@
 <!-- =============================
      Row 1: Order & User statistics
      ============================= -->
+
+    // Each card links to relevant management pages
 <div class="row">
     <div class="col-md-3 mb-3">
         <a asp-controller="Orders" asp-action="Index" class="text-decoration-none text-dark">
@@ -25,6 +27,7 @@
         </a>
     </div>
 
+    // Pending Orders
     <div class="col-md-3 mb-3">
         <a asp-controller="Orders" asp-action="Index" asp-route-status="Pending"
            class="text-decoration-none text-dark">
@@ -37,6 +40,7 @@
         </a>
     </div>
 
+    // In Progress Orders
     <div class="col-md-3 mb-3">
         <a asp-controller="Orders" asp-action="Index" asp-route-status="Preparing"
            class="text-decoration-none text-dark">
@@ -49,6 +53,7 @@
         </a>
     </div>
 
+    // Users
     <div class="col-md-3 mb-3">
         <a asp-controller="Admin" asp-action="Users"
            class="text-decoration-none text-dark">
@@ -65,6 +70,8 @@
 <!-- =============================
      Row 2: Menu-related statistics
      ============================= -->
+
+     // Each card links to relevant management pages
 <div class="row mt-3">
     <div class="col-md-3 mb-3">
         <a asp-action="ManageMenuItems" class="text-decoration-none text-dark">
@@ -77,6 +84,7 @@
         </a>
     </div>
 
+    // Tags
     <div class="col-md-3 mb-3">
         <a asp-action="ManageCategories" class="text-decoration-none text-dark">
             <div class="card border-secondary h-100">
@@ -88,6 +96,7 @@
         </a>
     </div>
 
+    // Schedules
     <div class="col-md-3 mb-3">
         <a asp-action="ManageSchedules" class="text-decoration-none text-dark">
             <div class="card border-secondary h-100">

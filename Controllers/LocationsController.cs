@@ -6,9 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
     /// Admin-only CRUD for locations (used in schedules).
-    /// </summary>
     [Authorize(Roles = "Admin")]
     public class LocationsController : Controller
     {

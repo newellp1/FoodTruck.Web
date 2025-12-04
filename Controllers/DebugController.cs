@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
+    /// Controller used for debugging schedule-related issues.
+    /// Provides endpoints to inspect all schedules and create test data.
     public class DebugController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -13,6 +15,9 @@ namespace FoodTruck.Web.Controllers
             _context = context;
         }
 
+        /// Displays all schedules in the system and compares them
+        /// to the logic used in the Home/Menu controllers for 
+        /// determining the currently-active schedule.
         public async Task<IActionResult> Schedules()
         {
             var now = DateTime.Now;
@@ -41,6 +46,8 @@ namespace FoodTruck.Web.Controllers
             return View();
         }
         
+        /// Creates a simple full-day test schedule for debugging,
+        /// using the first truck and location available in the database.        
         public async Task<IActionResult> CreateTestSchedule()
         {
             var truck = await _context.Trucks.FirstOrDefaultAsync();

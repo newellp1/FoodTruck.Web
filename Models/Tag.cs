@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoodTruck.Web.Models
 {
-    /// <summary>
     /// Represents a tag that can be applied to menu items (e.g., "Spicy", "Vegetarian", "Gluten-Free").
     /// Enables filtering and categorization of menu items by dietary preferences and attributes.
-    /// </summary>
     public class Tag
     {
         public int Id { get; set; }

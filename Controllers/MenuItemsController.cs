@@ -7,9 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
     /// Admin CRUD for menu items.
-    /// </summary>
     [Authorize(Roles = "Admin")]
     public class MenuItemsController : Controller
     {
@@ -196,9 +194,7 @@ namespace FoodTruck.Web.Controllers
         // HELPER METHODS
         // =========================================================
 
-        /// <summary>
         /// Fill ViewData["MenuCategoryId"] with a SelectList for the dropdown.
-        /// </summary>
         private void PopulateCategorySelectList(int? selectedId = null)
         {
             var categories = _context.MenuCategories
@@ -214,9 +210,8 @@ namespace FoodTruck.Web.Controllers
             );
         }
 
-        /// <summary>
         /// Populate ViewBag.Tags for checkbox list.
-        /// </summary>
+
         /// <param name="selectedTags">Array of selected tag IDs</param>
         private void PopulateTagsCheckList(int[]? selectedTags = null)
         {

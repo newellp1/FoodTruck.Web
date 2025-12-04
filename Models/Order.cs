@@ -3,6 +3,9 @@ using FoodTruck.Web.Models.Enums;
 
 namespace FoodTruck.Web.Models
 {
+    // Represents a customer's order.
+    /// Contains contact info, status, total amount, and associated order items.
+    /// Tracks the lifecycle of an order from creation to completion or cancellation.
     public class Order
     {
         public int Id { get; set; }

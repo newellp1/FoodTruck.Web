@@ -11,9 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
     /// Handles checkout, order confirmation, tracking, and history.
-    /// </summary>
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;

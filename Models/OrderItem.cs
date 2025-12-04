@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoodTruck.Web.Models
 {
+    // Represents an item within a customer's order.
+    /// Contains details about the menu item ordered, quantity, price, and any special notes.
     public class OrderItem
     {
         public int Id { get; set; }

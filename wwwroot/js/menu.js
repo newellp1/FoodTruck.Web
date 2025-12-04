@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
         itemDetailModal = new bootstrap.Modal(itemDetailModalEl);
     }
 
+    // Filters menu items based on search term and selected categories.
+    // Hides/shows menu sections accordingly.
+    // Called on search input or category checkbox change.
     function filterMenu() {
         const term = (searchInput?.value || "").toLowerCase();
         const selectedCategories = Array.from(categoryCheckboxes)
@@ -61,6 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
         attachItemDetailHandlers();
     });
 
+    // Attaches event handlers for item detail modal interactions.
+    // Handles quantity changes, modification selections, and adding to cart.
+    // Updates line price dynamically based on selections.
     function attachItemDetailHandlers() {
         const basePriceEl = document.getElementById("item-base-price");
         const linePriceEl = document.getElementById("item-line-price");
@@ -87,6 +93,9 @@ document.addEventListener("DOMContentLoaded", () => {
             linePriceEl.textContent = linePrice.toFixed(2);
         }
 
+        // Attaches event handlers for item detail modal interactions.
+        // Handles quantity changes, modification selections, and adding to cart.
+        // Updates line price dynamically based on selections.
         modCheckboxes.forEach(cb => cb.addEventListener("change", updateLinePrice));
         qtyInput.addEventListener("input", updateLinePrice);
 

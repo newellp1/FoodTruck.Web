@@ -8,7 +8,6 @@ namespace FoodTruck.Web.Controllers
 {
 
     /// Handles menu browsing and item detail interactions.
-
     public class MenuController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,7 +20,6 @@ namespace FoodTruck.Web.Controllers
     
         /// Shows active menu for current schedule.
         /// Supports sub-categories and their items.
-    
         public async Task<IActionResult> Index(string? search, List<int>? categories)
         {
             var now = DateTime.Now;
@@ -119,8 +117,7 @@ namespace FoodTruck.Web.Controllers
 
 
     
-        /// Returns item detail partial for modal (AJAX).
-    
+        /// Returns item detail partial for modal (AJAX).    
         public async Task<IActionResult> ItemDetail(int id)
         {
             var item = await _context.MenuItems

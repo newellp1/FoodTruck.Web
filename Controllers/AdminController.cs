@@ -9,25 +9,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
+
     /// Admin-only controller that provides:
     ///  - A stats dashboard (Index)
     ///  - A card-based admin home page (Dashboard)
     ///  - Quick redirects to CRUD controllers
     ///  - A Users page listing all users and their roles
-    /// </summary>
-    [Authorize(Roles = "Admin")] // Only Admins can access anything in this controller
+
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        /// <summary>
         /// Constructor that receives the EF Core DbContext and UserManager
         /// via dependency injection.
-        /// </summary>
-        /// <param name="context">ApplicationDbContext used to query domain data.</param>
-        /// <param name="userManager">UserManager used to query Identity users and their roles.</param>
+
         public AdminController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager)
@@ -40,7 +37,6 @@ namespace FoodTruck.Web.Controllers
         // 1) Stats Dashboard (Index)
         // ============================================================
 
-        /// <summary>
         /// Admin stats dashboard.
         /// Shows summary statistics such as:
         ///  - Total orders
@@ -48,7 +44,6 @@ namespace FoodTruck.Web.Controllers
         ///  - Count of menu items, categories, schedules, users
         ///
         /// View: Views/Admin/Index.cshtml (model: Admin)
-        /// </summary>
         public async Task<IActionResult> Index()
         {
             // Count orders and group by status
@@ -129,25 +124,19 @@ namespace FoodTruck.Web.Controllers
         //    (Optional, but handy for the Admin UI)
         // ============================================================
 
-        /// <summary>
         /// Redirects to the MenuCategories management page.
-        /// </summary>
         public IActionResult ManageCategories()
         {
             return RedirectToAction("Index", "MenuCategories");
         }
 
-        /// <summary>
         /// Redirects to the MenuItems management page.
-        /// </summary>
         public IActionResult ManageMenuItems()
         {
             return RedirectToAction("Index", "MenuItems");
         }
 
-        /// <summary>
         /// Redirects to the Schedules management page.
-        /// </summary>
         public IActionResult ManageSchedules()
         {
             return RedirectToAction("Index", "Schedules");

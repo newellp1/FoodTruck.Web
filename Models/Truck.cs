@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoodTruck.Web.Models
 {
+    // Represents a food truck with its name, description, and associated schedules.
+    //
     public class Truck
     {
         public int Id { get; set; }

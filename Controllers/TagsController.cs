@@ -6,10 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodTruck.Web.Controllers
 {
-    /// <summary>
     /// Manages tags that can be applied to menu items for filtering and categorization.
     /// Tags include dietary preferences (Vegetarian, Gluten-Free) and attributes (Spicy, Popular, New).
-    /// </summary>
     [Authorize(Roles = "Admin")]
     public class TagsController : Controller
     {
@@ -20,9 +18,7 @@ namespace FoodTruck.Web.Controllers
             _context = context;
         }
 
-        /// <summary>
         /// Display list of all tags ordered by DisplayOrder then Name.
-        /// </summary>
         public async Task<IActionResult> Index()
         {
             var tags = await _context.Tags
@@ -32,10 +28,7 @@ namespace FoodTruck.Web.Controllers
 
             return View(tags);
         }
-
-        /// <summary>
         /// Display details for a specific tag including all menu items that have this tag.
-        /// </summary>
         /// <param name="id">Tag ID</param>
         public async Task<IActionResult> Details(int? id)
         {
@@ -51,18 +44,14 @@ namespace FoodTruck.Web.Controllers
             return View(tag);
         }
 
-        /// <summary>
         /// Display form to create a new tag.
-        /// </summary>
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        /// <summary>
         /// Process form submission to create a new tag.
-        /// </summary>
         /// <param name="tag">Tag model from form</param>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -79,9 +68,7 @@ namespace FoodTruck.Web.Controllers
             return View(tag);
         }
 
-        /// <summary>
         /// Display form to edit an existing tag.
-        /// </summary>
         /// <param name="id">Tag ID</param>
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
@@ -94,9 +81,7 @@ namespace FoodTruck.Web.Controllers
             return View(tag);
         }
 
-        /// <summary>
         /// Process form submission to update an existing tag.
-        /// </summary>
         /// <param name="id">Tag ID</param>
         /// <param name="tag">Updated tag model from form</param>
         [HttpPost]
@@ -127,9 +112,7 @@ namespace FoodTruck.Web.Controllers
             return View(tag);
         }
 
-        /// <summary>
         /// Display confirmation page before deleting a tag.
-        /// </summary>
         /// <param name="id">Tag ID</param>
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
@@ -146,9 +129,7 @@ namespace FoodTruck.Web.Controllers
             return View(tag);
         }
 
-        /// <summary>
         /// Process tag deletion. Removes all MenuItemTag associations before deleting the tag.
-        /// </summary>
         /// <param name="id">Tag ID</param>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -164,9 +145,7 @@ namespace FoodTruck.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
         /// Check if a tag exists in the database.
-        /// </summary>
         /// <param name="id">Tag ID</param>
         /// <returns>True if tag exists, false otherwise</returns>
         private bool TagExists(int id)

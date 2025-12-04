@@ -1,5 +1,6 @@
 namespace FoodTruck.Web.Models.Enums
 {
+    /// Enumeration representing the various statuses an order can have in the system.
     public enum OrderStatus
     {
         Pending = 0,

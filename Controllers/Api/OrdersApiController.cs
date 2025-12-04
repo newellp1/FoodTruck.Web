@@ -27,19 +27,16 @@ namespace FoodTruck.Web.Controllers.Api
         /// Returns the current status of an order.
         /// Used by the customer tracking page to auto-refresh
         /// status, ETA, and cancel reason.
-        ///
         /// GET: /api/OrdersApi/{id}/status
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetStatus(int id)
         {
-            // We only need a few fields, so FindAsync is fine here.
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
                 return NotFound(new { message = $"Order {id} not found." });
             }
 
-            // Anonymous object keeps response simple and JSON-friendly.
             return Ok(new
             {
                 order.Id,
@@ -65,7 +62,6 @@ namespace FoodTruck.Web.Controllers.Api
         /// Allows Staff/Admin to update the status of an order.
         /// This is intended to be called from an AJAX-driven
         /// kitchen/queue screen.
-        ///
         /// PATCH: /api/OrdersApi/{id}/status
         /// Body:  { "status": "Ready", "cancelReason": null }
         [Authorize(Roles = "Staff,Admin")]
@@ -80,7 +76,7 @@ namespace FoodTruck.Web.Controllers.Api
                 return NotFound(new { message = $"Order {id} not found." });
             }
 
-            // Simple guard: do not update terminal states.
+            // Prevent changes to already-completed or cancelled orders.
             if (order.Status == OrderStatus.Completed ||
                 order.Status == OrderStatus.Cancelled ||
                 order.Status == OrderStatus.Rejected)
@@ -106,7 +102,7 @@ namespace FoodTruck.Web.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            // Return the minimal info the front-end usually needs.
+            // Return the minimal info the front-end needs.
             return Ok(new
             {
                 order.Id,

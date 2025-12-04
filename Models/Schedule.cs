@@ -2,6 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoodTruck.Web.Models
 {
+    // Represents a scheduled appearance of a food truck at a specific location and time.
+    // Contains the truck, location, start and end times, and whether the schedule is currently active.
     public class Schedule
     {
         public int Id { get; set; }

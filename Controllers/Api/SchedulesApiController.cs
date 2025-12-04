@@ -22,7 +22,7 @@ namespace FoodTruck.Web.Controllers.Api
 
     
         /// Returns information about the *current* or *next* schedule.
-        ///
+        /// 
         /// GET: /api/SchedulesApi/active
         ///
         /// Response shape:
@@ -42,7 +42,7 @@ namespace FoodTruck.Web.Controllers.Api
         {
             var now = DateTime.Now;
 
-            // Try to find an active schedule for "right now".
+            // Active schedule for "right now".
             var active = await _context.Schedules
                 .Include(s => s.Truck)
                 .Include(s => s.Location)

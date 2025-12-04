@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartLinesContainer = document.getElementById("cart-lines");
     if (!cartLinesContainer) return;
 
+    // Updates cart lines by sending AJAX requests to the server.
+    // Expects a URL and form data object.
     async function updateCartLines(url, formData) {
         const resp = await fetch(url, {
             method: "POST",
@@ -20,6 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Handles click events for quantity adjustments and line removals.
+    // Delegates events to the container for efficiency.
+    // Also handles direct quantity input changes.
     cartLinesContainer.addEventListener("click", e => {
         if (e.target.classList.contains("js-qty-minus") ||
             e.target.classList.contains("js-qty-plus")) {
@@ -39,6 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Handles direct quantity input changes.
+    // Sends an update request when the quantity input value changes.
+    // Listens for 'change' events on quantity input fields.
     cartLinesContainer.addEventListener("change", e => {
         if (e.target.classList.contains("js-qty")) {
             const index = e.target.dataset.index;

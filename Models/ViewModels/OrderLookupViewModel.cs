@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoodTruck.Web.Models.ViewModels
 {
+    // ViewModel for looking up an order by various criteria.
     public class OrderLookupViewModel
     {
         [Display(Name = "Order #")]

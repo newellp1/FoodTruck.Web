@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FoodTruck.Web.Data
 {
+    /// Seed initial roles and admin user for the application.
     public static class IdentitySeed
     {
+        /// Ensure the Admin role exists and assign it to the default admin user.
         public static async Task SeedAsync(IApplicationBuilder app)
         {
             using var scope = app.ApplicationServices.CreateScope();

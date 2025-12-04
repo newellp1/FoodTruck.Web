@@ -22,7 +22,6 @@ namespace FoodTruck.Web.Controllers.Api
     
         /// Returns the active menu, grouped by categories and sub-categories.
         /// Only items with IsAvailable = true are included.
-        ///
         /// GET: /api/MenuApi/active
     
         [HttpGet("active")]

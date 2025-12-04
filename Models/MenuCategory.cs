@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoodTruck.Web.Models
 {
-    /// Represents a menu category, e.g., "Beverages", "Soda", "Tacos".
+    /// Represents a menu category, e.g., "Beverages", "Side", "Entree".
     /// Supports sub-categories via ParentCategoryId.
     public class MenuCategory
     {
         /// Primary key.
         public int Id { get; set; }
 
-        /// Display name of the category (e.g., "Beverages", "Soda").
+        /// Display name of the category (e.g., "Beverages", "Side", "Entree").
         [Required]
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
@@ -29,14 +29,14 @@ namespace FoodTruck.Web.Models
 
         /// Optional foreign key pointing to this category's parent category.
         /// If null, this category is a top-level category (e.g., "Beverages").
-        /// If set, this is a sub-category (e.g., "Soda" under "Beverages").
+        /// If set, this is a sub-category (e.g., "Water" under "Beverages").
         public int? ParentCategoryId { get; set; }
 
         /// Navigation property to the parent category.
         public MenuCategory? ParentCategory { get; set; }
 
         /// Navigation property for child categories (sub-categories).
-        /// For example, "Beverages" can have sub-categories "Soda" and "Coffee".
+        /// For example, "Beverages" can have sub-categories "Soda" and "Water".
         public ICollection<MenuCategory> SubCategories { get; set; } = new List<MenuCategory>();
 
         /// Menu items directly under this category (or sub-category).

@@ -1,9 +1,7 @@
 namespace FoodTruck.Web.Models
 {
-    /// <summary>
     /// Join table entity for the many-to-many relationship between MenuItems and Tags.
     /// Allows a menu item to have multiple tags and a tag to be applied to multiple menu items.
-    /// </summary>
     public class MenuItemTag
     {
         public int MenuItemId { get; set; }

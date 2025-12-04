@@ -85,9 +85,7 @@ namespace FoodTruck.Web.Controllers
             return View(orders); // expects Views/Staff/History.cshtml (optional)
         }
 
-        /// <summary>
         /// Shows details of a specific order
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> OrderDetails(int id)
         {
@@ -101,9 +99,7 @@ namespace FoodTruck.Web.Controllers
             return View(order);
         }
 
-        /// <summary>
         /// Shows the edit form for an order (GET)
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> EditOrder(int id)
         {
@@ -117,9 +113,7 @@ namespace FoodTruck.Web.Controllers
             return View(order);
         }
 
-        /// <summary>
         /// Saves changes to an order (POST)
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditOrder(int id, Order order)

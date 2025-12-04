@@ -1,4 +1,6 @@
 // Polls order status for tracking page.
+// Updates status text and styling based on current status.
+// Polls every 7 seconds.
 document.addEventListener("DOMContentLoaded", () => {
     const statusContainer = document.getElementById("order-status");
     const statusText = document.getElementById("order-status-text");
